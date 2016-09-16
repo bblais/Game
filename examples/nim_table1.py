@@ -17,7 +17,7 @@ def valid_moves(state,player):
 
 def show_state(state):
 
-    print "There are ",state," sticks left."
+    print("There are ",state," sticks left.")
 
 
 def update_state(state,player,move):
@@ -49,7 +49,7 @@ def random_move(state,player):
 
 def human_move(state,player):
 
-    move=input('Take 1, 2 or 3 sticks ')
+    move=eval(input('Take 1, 2 or 3 sticks '))
     return move
 
 def table_move(state,player,info):

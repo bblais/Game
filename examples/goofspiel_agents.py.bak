@@ -15,15 +15,15 @@ lowhigh_agent.name='LoHi'
 
 def human_move(hand,shown,info=None):
 
-    print("Your hand is:",hand)
+    print "Your hand is:",hand
     while True:
-        rank=eval(input('What is your bet (give the rank)? '))
+        rank=input('What is your bet (give the rank)? ')
         
         card=[x for x in hand if x.rank==rank]
         if card:
             return card[0]
         else:
-            print(rank, "Not in hand.")
+            print rank, "Not in hand."
     
     return card
     

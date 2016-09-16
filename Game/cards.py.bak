@@ -38,10 +38,10 @@ class Card(object):
             if not value is None:                
                 value=suits[value.lower()[0]]
 
-        if '_Card__initialized' not in self.__dict__:  
+        if not self.__dict__.has_key('_Card__initialized'):  
             # this test allows attributes to be set in the __init__ method
             return dict.__setattr__(self, item, value)
-        elif item in self.__dict__: 
+        elif self.__dict__.has_key(item): 
             # any normal attributes are handled normally            
             dict.__setattr__(self, item, value)
         else:

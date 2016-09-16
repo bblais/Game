@@ -15,7 +15,7 @@ def initial_state():
 def show_state(state):
     # A clever way to print the board
     tempboard=Board(8,8)
-    tempboard.board=list(range(8*8))
+    tempboard.board=range(8*8)
     tempboard.pieces=[str(i) for i in range(8*8)]
     tempboard.pieces.extend(['x','o'])  # 64=x, 65=o
     
@@ -24,21 +24,21 @@ def show_state(state):
     for x in state.find(2):
         tempboard[x]=65
     
-    print(tempboard)
+    print tempboard
 
     #print state
     
     
 def get_human_move(state,player):
-    print("Player ",player)
+    print "Player ",player
         
     if player==1: # there is only one fox, so find it:
         start=state.find(1)[0]
-        print("Starting position for move?",start)
+        print "Starting position for move?",start
     else:
-        start=eval(input("Starting position for move?"))
+        start=input("Starting position for move?")
         
-    end=eval(input("Ending position for move?"))
+    end=input("Ending position for move?")
     
     move=[start,end]
     

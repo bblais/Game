@@ -3,7 +3,7 @@
 
 # <codecell>
 
-
+from __future__ import division
 from Game import *
 from copy import deepcopy
 
@@ -43,7 +43,7 @@ deepcopy(hands)
 # <codecell>
 
 state=initial_state()
-print(state)
+print state
 
 # <codecell>
 
@@ -89,14 +89,14 @@ def play(agents,number_of_cards=4,
         for round in range(len(deck)):
             
             if display:
-                print('Current Scores: ')
+                print 'Current Scores: '
                 for agent,score in zip(agents,scores):
-                    print('\t',agent.name,':',score)
+                    print '\t',agent.name,':',score
             
             shown=deal(deck)[0]
             
             if display:
-                print("Card shown is: ",shown)
+                print "Card shown is: ",shown
             
             moves=[]
             use_full_state=False
@@ -134,7 +134,7 @@ def play(agents,number_of_cards=4,
                 
             if display:
                 for agent,move in zip(agents,moves):
-                    print("%s chooses card %s" % (agent.name,move))
+                    print "%s chooses card %s" % (agent.name,move)
             
             winners=get_winners(moves)
             score_adjust=shown.rank/len(winners)  # score is divided among winners
@@ -152,18 +152,18 @@ def play(agents,number_of_cards=4,
                     
             for winner in winners:
                 if display:
-                    print(agents[winner].name,"wins",score_adjust)
+                    print agents[winner].name,"wins",score_adjust
                 scores[winner]+=score_adjust
 
                 
                 
                 
         if display:        
-            print()
-            print('Final Scores: ')
+            print
+            print 'Final Scores: '
             for agent,score in zip(agents,scores):
-                print('\t',agent.name,':',score)
-            print("\n===\n")
+                print '\t',agent.name,':',score
+            print "\n===\n"
             
         all_scores.append(scores)
     
@@ -204,21 +204,21 @@ def human_move(state,info=None):
     if len(state)==3:  # full state
         all_hands,shown,deck=state
         hand=all_hands[0]
-        print("The other hands are:",all_hands[1:])
-        print("Remaining in deck is:",deck)
+        print "The other hands are:",all_hands[1:]
+        print "Remaining in deck is:",deck
     else:
         hand,shown=state
         
-    print("Your hand is:",hand)
-    print("Shown is:",shown)
+    print "Your hand is:",hand
+    print "Shown is:",shown
     while True:
-        rank=eval(input('What is your bet (give the rank)? '))
+        rank=input('What is your bet (give the rank)? ')
         
         card=[x for x in hand if x.rank==rank]
         if card:
             return card[0]
         else:
-            print(rank, "Not in hand.")
+            print rank, "Not in hand."
     
     return card
     
@@ -324,9 +324,9 @@ for score in scores:
     else:
         wins[2]+=1
         
-print(agents[0].name,' won ',wins[0],'times.')
-print(agents[1].name,' won ',wins[1],'times.')
-print(wins[2],'ties.')
+print agents[0].name,' won ',wins[0],'times.'
+print agents[1].name,' won ',wins[1],'times.'
+print wins[2],'ties.'
 
 Remember(Q_agent.Q,filename='Q_data.dat')
 

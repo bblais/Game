@@ -45,7 +45,7 @@ def minvalue(current_state,player,depth=0,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for min
         return 1
@@ -57,7 +57,7 @@ def minvalue(current_state,player,depth=0,maxdepth=inf):
 
     moves=valid_moves(current_state,player)
     if moves is None:
-        raise ValueError("valid_moves returned None with state=%s and player=%d - Did you forget to return the moves?" % (str(current_state),player))
+        raise ValueError,"valid_moves returned None with state=%s and player=%d - Did you forget to return the moves?" % (str(current_state),player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
     repeats=[repeat_move(deepcopy(current_state),player,move) 
@@ -93,7 +93,7 @@ def maxvalue(current_state,player,depth=0,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for max
         return -1
@@ -136,7 +136,7 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for min
         return 1
@@ -184,7 +184,7 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for max
         return -1
@@ -233,7 +233,7 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for min
         return 1-depth/1000.0
@@ -281,7 +281,7 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     status=win_status(current_state,other_player)
     if not status in ['win','lose','stalemate',None]:
-        raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
+        raise ValueError,"Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status
 
     if status=='win':  # bad for max
         return -1+depth/1000.0
@@ -419,7 +419,7 @@ def minimax_values_orig(current_state,player,maxdepth=inf,display=True):
     values,moves=mysort(values,moves,reverse=True)
 
     if display:
-        print("  Choice Time: %s" % time2str(time.time()-start_time))
+        print "  Choice Time: %s" % time2str(time.time()-start_time)
 
 
     return values,moves
@@ -493,7 +493,7 @@ def minimax_values(current_state,player,maxdepth=inf,
     values,moves=mysort(values,moves,reverse=True)
 
     if display:
-        print("  Choice Time: %s" % time2str(time.time()-start_time))
+        print "  Choice Time: %s" % time2str(time.time()-start_time)
 
 
     return values,moves

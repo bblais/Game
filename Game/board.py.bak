@@ -31,33 +31,33 @@ class Board(object):
         if isinstance(rc,int):
             index=rc
             if rc>=len(self.board) or rc<0:
-                raise IndexError("Illegal index")
+                raise IndexError,"Illegal index"
         elif len(self.shape)==1:
             index=rc[0]
             if index>=length(self.board) or rc<0:
-                raise IndexError("Illegal index")
+                raise IndexError,"Illegal index"
         elif len(self.shape)==2:
             r,c=rc
             
             if r>=self.shape[0] or r<0:
-                raise IndexError("Illegal row")
+                raise IndexError,"Illegal row"
             if c>=self.shape[1] or c<0:
-                raise IndexError("Illegal col")
+                raise IndexError,"Illegal col"
                 
             index=r*self.shape[1]+c
         elif len(self.shape)==3:
             r,c,h=rc
             if r>=self.shape[0] or r<0:
-                raise IndexError("Illegal row")
+                raise IndexError,"Illegal row"
             if c>=self.shape[1] or c<0:
-                raise IndexError("Illegal col")
+                raise IndexError,"Illegal col"
             if h>=self.shape[2] or h<0:
-                raise IndexError("Illegal height")
+                raise IndexError,"Illegal height"
             
             index=h*self.shape[0]*self.shape[1]+r*self.shape[1]+c
             
         else:
-            raise ValueError("Not implemented")
+            raise ValueError,"Not implemented"
             
         return index
         
@@ -84,7 +84,7 @@ class Board(object):
             c=index%num_cols
             return (r,c)
         
-        raise ValueError("Not implemented")  
+        raise ValueError,"Not implemented"  
         
         
     def __getitem__(self,key):
@@ -97,7 +97,7 @@ class Board(object):
     def row_positions(self,length=None):
         
         tempboard=Board(*self.shape)
-        tempboard.board=list(range(prod(self.shape)))
+        tempboard.board=range(prod(self.shape))
         
         for row in tempboard.rows(length):
             yield row
@@ -221,7 +221,7 @@ class Board(object):
     def col_positions(self,length=None):
         
         tempboard=Board(*self.shape)
-        tempboard.board=list(range(prod(self.shape)))
+        tempboard.board=range(prod(self.shape))
         
         for col in tempboard.cols(length):
             yield col
@@ -229,7 +229,7 @@ class Board(object):
     def diag_positions(self,length=None):
         
         tempboard=Board(*self.shape)
-        tempboard.board=list(range(prod(self.shape)))
+        tempboard.board=range(prod(self.shape))
         
         for diag in tempboard.diags(length):
             yield diag
@@ -286,7 +286,7 @@ class Board(object):
                         if keep:
                             yield d
         else:
-            raise ValueError("not implemented for dims 4+")
+            raise ValueError,"not implemented for dims 4+"
             
     def heights(self,length=None):
         assert self.dimension==3
@@ -316,7 +316,7 @@ class Board(object):
                 for b in self.board:
                     yield b
             else:
-                raise ValueError("Invalid length")
+                raise ValueError,"Invalid length"
         elif self.dimension==2:
             if length==None:
                 length=self.shape[1]
@@ -351,14 +351,14 @@ class Board(object):
                         if keep:
                             yield d
         else:
-            raise ValueError("not implemented for dims 4+")
+            raise ValueError,"not implemented for dims 4+"
     
     def diags(self,length=None):
         if self.dimension==1:
-            raise ValueError("No diagonals on 1D boards")
+            raise ValueError,"No diagonals on 1D boards"
         
         if self.shape[0]!=self.shape[1] and length is None:
-            raise ValueError("Need a specified diagonal length for non-square boards")
+            raise ValueError,"Need a specified diagonal length for non-square boards"
         elif length==None:
             length=self.shape[0]
         
@@ -469,17 +469,17 @@ class Board(object):
 
 
         else:
-            raise ValueError("Not implemented for dims 4+")
+            raise ValueError,"Not implemented for dims 4+"
 
     def show_locations(self):
         loc=Board(*self.shape)
-        loc.board=list(range(prod(self.shape)))
-        print(loc)
+        loc.board=range(prod(self.shape))
+        print loc
         
     def __repr__(self):
         if not self.pieces is None:
             if any([x>=len(self.pieces) for x in self.board]):
-                print("Warning...illegal values for pieces...resetting pieces")
+                print "Warning...illegal values for pieces...resetting pieces"
                 self.pieces=None
     
         if self.dimension==1 or self.dimension==2:
@@ -516,27 +516,27 @@ if __name__=="__main__":
     import random
     
     b=Board(4,4)
-    b.board=list(range(len(b.board)))
+    b.board=range(len(b.board))
     
-    print(b)
-    print("==")
+    print b
+    print "=="
     
     if False:
         for d in b.diags(3):
-            print(d)
-        print("==")
+            print d
+        print "=="
     
     if False:    
         b=Board(4,4)
-        b.board=list(range(len(b.board)))
+        b.board=range(len(b.board))
         random.shuffle(b.board)
-        print(b)
+        print b
         for d in b.rows(2):
-            print(d)
-        print("==")
+            print d
+        print "=="
         for d in b.row_positions(2):
-            print(d)
-        print("==")
+            print d
+        print "=="
         
         
     b=Board(4,4)
@@ -544,7 +544,7 @@ if __name__=="__main__":
     for i in range(16):
         b.board[i]=random.choice([0,1,2])
                 
-    print(b)
+    print b
     
     b.moves(1,"nex")
     

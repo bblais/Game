@@ -35,17 +35,17 @@ def update_state(board,player,move):
 
 
 def show_state(board):
-    print(board)
+    print board
     
-    print()
-    print("Choices:")
-    print("""
+    print
+    print "Choices:"
+    print """
      0 | 1 | 2
     ---+---+---
      3 | 4 | 5
     ---+---+---
      6 | 7 | 8
-    """)
+    """
 
 def random_move(state,player):
 
@@ -53,15 +53,15 @@ def random_move(state,player):
     return random.choice(moves)
 
 def human_move(state,player):
-    print("Player ", player, end=' ')
+    print "Player ", player,
     valid_move=False
     while not valid_move:
-        move=eval(input('What is your move? '))
+        move=input('What is your move? ')
 
         if move in valid_moves(state,player):
             valid_move=True
         else:
-            print("Illegal move.")
+            print "Illegal move."
 
     return move
     

@@ -8,26 +8,26 @@ b=Board(3,3,3)
 for i in range(len(b)):
     b[i]=i
     
-print(b)
+print b
 
-print("Rows:")
+print "Rows:"
 for row in b.rows():
-    print(row)
+    print row
 
-print("Cols:")
+print "Cols:"
 for col in b.cols():
-    print(col)
+    print col
 
 
 # not sure what a good name for this is...
 # is there a better name?
-print("Heights:")  
+print "Heights:"  
 for col in b.heights():
-    print(col)
+    print col
     
-print("Diags:")
+print "Diags:"
 for diag in b.diags():
-    print(diag)
+    print diag
     
     
     
@@ -63,7 +63,7 @@ b[14]=1
 b[2]=2
 b[11]=2
 
-print(b)
+print b
 
 # want to count the fraction of 2 in a row?
 
@@ -82,7 +82,7 @@ for row in b.rows():
     
 # etc... with heights and diags....
 
-print("Player",player,"has ",two_in_a_row," twos in a row out of",total)
+print "Player",player,"has ",two_in_a_row," twos in a row out of",total
 
 
 

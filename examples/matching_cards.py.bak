@@ -1,4 +1,4 @@
-
+from __future__ import division
 from Game import *
 
 # not sure if this is a real game, but here goes
@@ -33,19 +33,19 @@ def valid_cards(hand,shown,trump_card):
         
 def choose_card(hand):
     for i,card in enumerate(hand):
-        print("[%d] %s" % (i+1,str(card)))
+        print "[%d] %s" % (i+1,str(card))
         
     valid=False
     while not valid:
-        response=input('Which card? ')
+        response=raw_input('Which card? ')
         try:
             cardnum=int(response)-1
             if cardnum<0 or cardnum>=len(hand):
-                print("Illegal move")
+                print "Illegal move"
             else:
                 valid=True
         except ValueError:
-            print("Illegal move (please enter a card number)")
+            print "Illegal move (please enter a card number)"
         
     return hand[cardnum]
        
@@ -98,20 +98,20 @@ def play(agents,number_of_decks=1,
                 hand=agent.hand
                 
                 if display:
-                    print(agent.name,"'s move")
-                    print("\tShown is ",shown)
-                    print("\tYour hand is:",hand)
+                    print agent.name,"'s move"
+                    print "\tShown is ",shown
+                    print "\tYour hand is:",hand
                     
                 valid=False
                 while not valid:
                     card_choice=agent.move(hand,shown,agent)
                     if card_choice not in valid_cards(hand,shown,trump_card):
-                        print("Illegal move",card_choice)
+                        print "Illegal move",card_choice
                     else:
                         valid=True
                                         
                 if display:
-                    print("\t Move: ",card_choice)
+                    print "\t Move: ",card_choice
                     
                 agent.hand.remove(card_choice)
                 shown[agent.name]=card_choice
@@ -141,12 +141,12 @@ def play(agents,number_of_decks=1,
             cards=[shown[name] for name in shown]
             if display:
                 if max_name=='_up_':
-                    print("no winner")
+                    print "no winner"
                 else:
-                    print(max_name,"wins trick",cards)
+                    print max_name,"wins trick",cards
                     
             collection[max_name].extend(cards)
-            print("---------------")
+            print "---------------"
                 
 
         for agent in agents:
@@ -157,22 +157,22 @@ def play(agents,number_of_decks=1,
             agent.trump_count=count
         
         if display:
-            print("Results")
+            print "Results"
             for agent in agents:
-                print(agent.name)
-                print("\t",collection[agent.name])
-                print("\tNumber of trump:",agent.trump_count)
+                print agent.name
+                print "\t",collection[agent.name]
+                print "\tNumber of trump:",agent.trump_count
                 
         for agent in agents:
             agent.score+=agent.trump_count
 
         if display:
-            print("Current scores:")
+            print "Current scores:"
             for agent in agents:
-                print("\t%s: %d" % (agent.name,agent.score))
+                print "\t%s: %d" % (agent.name,agent.score)
 
         if display:
-            print("=================")
+            print "================="
           
     return [agent.score for agent in agents]
 

@@ -1,4 +1,4 @@
-
+from __future__ import division
 from Game import *
 
 def value(hand):
@@ -48,36 +48,36 @@ def play(agents,number_of_decks=1,
             hand=agent.hand
             
             if display:
-                print(agent.name,"'s move")
-                print("\tShown is ",shown)
-                print("\tYour hand is:",hand)
+                print agent.name,"'s move"
+                print "\tShown is ",shown
+                print "\tYour hand is:",hand
                 
             while True:  # keep going until stay or bust
                 move=agent.move(hand,shown,agent)
                 if display:
-                    print("\t Move: ",move)
+                    print "\t Move: ",move
                 if move=='s':
                     break
                 agent.hand.extend(deal(deck))
 
                 if display:
-                    print(agent.name)
-                    print("\tShown is ",shown)
-                    print("\tYour hand is:",hand)
+                    print agent.name
+                    print "\tShown is ",shown
+                    print "\tYour hand is:",hand
 
                 if value(agent.hand)>21:
                     if display:
-                        print("\tBust!")
+                        print "\tBust!"
                     break
 
         if display:
-            print("Results")
+            print "Results"
             for agent in agents:
-                print(agent.name)
-                print("\t",agent.hand)
-                print("\t",value(agent.hand))
+                print agent.name
+                print "\t",agent.hand
+                print "\t",value(agent.hand)
                 if value(agent.hand)>21:
-                    print("\t\tBust!")
+                    print "\t\tBust!"
                     
                 
         winners=[]
@@ -100,9 +100,9 @@ def play(agents,number_of_decks=1,
             winners=[dealer_agent]
 
         if display:
-            print("Winners:")
+            print "Winners:"
             for agent in winners:
-                print("\t",agent.name)
+                print "\t",agent.name
                 
         for agent in winners:
             agent.score+=1
@@ -118,7 +118,7 @@ def play(agents,number_of_decks=1,
 
 
         if display:
-            print("=================")
+            print "================="
           
     return [agent.score for agent in agents]
     
@@ -141,7 +141,7 @@ def dealer_move2(hand,shown,info=None):
     
 
 def human_move(hand,shown,info=None):
-    move=input('Hit or stay? ')    
+    move=raw_input('Hit or stay? ')    
     move=move.lower()[0]
     return move    
     
@@ -256,4 +256,4 @@ for i in range(10):
                 number_of_games=100,
                 display=False)
 
-    print(scores)
+    print scores

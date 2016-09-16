@@ -1,8 +1,19 @@
+
+# coding: utf-8
+
+# In[1]:
+
 from Game import *
+
+
+# In[2]:
 
 def initial_state():
     return Board(3,3)
-    
+
+
+# In[3]:
+
 def valid_moves(board,player):
 
     empty=[]
@@ -11,8 +22,10 @@ def valid_moves(board,player):
             empty.append(i)
 
     return empty
-    
-    
+
+
+# In[4]:
+
 def check_three_in_a_row(row):
 
     if row[0]==1 and row[1]==1 and row[2]==1:
@@ -22,6 +35,8 @@ def check_three_in_a_row(row):
     else:
         return 0
 
+
+# In[5]:
 
 def win_status(board,player):
     # in ttt, after a move, that player can either win or stalemate
@@ -65,10 +80,15 @@ def win_status(board,player):
 
     return None
 
+
+# In[6]:
+
 def update_state(board,player,move):
     board[move]=player
     return board
 
+
+# In[7]:
 
 def print_row(row):
 
@@ -102,7 +122,7 @@ def print_row(row):
     print(line)
 
 
-
+# In[8]:
 
 def show_state(board):
 
@@ -122,6 +142,9 @@ def show_state(board):
      6 | 7 | 8
     """)
 
+
+# In[9]:
+
 def random_move(state,player):
 
     moves=valid_moves(state,player)
@@ -139,7 +162,11 @@ def human_move(state,player):
             print("Illegal move.")
 
     return move
-    
+ 
+
+
+# In[10]:
+
 human_agent=Agent(human_move)
 random_agent=Agent(random_move)
 
@@ -149,8 +176,7 @@ g.run(human_agent,random_agent)
 g.report()   # state the percentage of wins, ties, etc...
 
 
-
-
+# In[ ]:
 
 
 

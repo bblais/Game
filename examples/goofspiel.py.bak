@@ -1,4 +1,4 @@
-
+from __future__ import division
 from Game import *
 from goofspiel_agents import *
 
@@ -70,20 +70,20 @@ def play(agents,number_of_cards=4,
         for round in range(len(deck)):
             
             if display:
-                print('Current Scores: ')
+                print 'Current Scores: '
                 for agent,score in zip(agents,scores):
-                    print('\t',agent.name,':',score)
+                    print '\t',agent.name,':',score
             
             shown=deal(deck)[0]
             
             if display:
-                print("Card shown is: ",shown)
+                print "Card shown is: ",shown
             
             moves=[]
             for hand,agent in zip(hands,agents):
                 card=agent.move(hand,shown,agent)
                 if display:
-                    print("%s chooses card %s" % (agent.name,str(card)))
+                    print "%s chooses card %s" % (agent.name,str(card))
                 hand.remove(card)
                 moves.append(card)
             
@@ -92,15 +92,15 @@ def play(agents,number_of_cards=4,
             
             for winner in winners:
                 if display:
-                    print(agents[winner].name,"wins",score_adjust)
+                    print agents[winner].name,"wins",score_adjust
                 scores[winner]+=score_adjust
 
         if display:        
-            print()
-            print('Final Scores: ')
+            print
+            print 'Final Scores: '
             for agent,score in zip(agents,scores):
-                print('\t',agent.name,':',score)
-            print("\n===\n")
+                print '\t',agent.name,':',score
+            print "\n===\n"
             
         all_scores.append(scores)
     
@@ -123,7 +123,7 @@ for score in scores:
     else:
         wins[2]+=1
         
-print(agents[0].name,' won ',wins[0],'times.')
-print(agents[1].name,' won ',wins[1],'times.')
-print(wins[2],'ties.')
+print agents[0].name,' won ',wins[0],'times.'
+print agents[1].name,' won ',wins[1],'times.'
+print wins[2],'ties.'
     

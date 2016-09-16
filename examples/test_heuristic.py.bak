@@ -73,8 +73,8 @@ for i in range(30):
     else:
         B[i]=0
         
-print(B)
+print B
 
-print(heuristic(B,1))
-print(heuristic(B,2))
+print heuristic(B,1)
+print heuristic(B,2)
 

@@ -99,7 +99,7 @@ def print_row(row):
         line=line+' O '
 
     line=line+'|'
-    print(line)
+    print line
 
 
 
@@ -107,20 +107,20 @@ def print_row(row):
 def show_state(board):
 
     print_row( [ board[0],board[1],board[2] ])
-    print("---+---+---")
+    print "---+---+---"
     print_row( [ board[3],board[4],board[5] ])
-    print("---+---+---")
+    print "---+---+---"
     print_row( [ board[6],board[7],board[8]])
     
-    print()
-    print("Choices:")
-    print("""
+    print
+    print "Choices:"
+    print """
      0 | 1 | 2
     ---+---+---
      3 | 4 | 5
     ---+---+---
      6 | 7 | 8
-    """)
+    """
 
 def random_move(state,player):
 
@@ -128,15 +128,15 @@ def random_move(state,player):
     return random.choice(moves)
 
 def human_move(state,player):
-    print("Player ", player, end=' ')
+    print "Player ", player,
     valid_move=False
     while not valid_move:
-        move=eval(input('What is your move? '))
+        move=input('What is your move? ')
 
         if move in valid_moves(state,player):
             valid_move=True
         else:
-            print("Illegal move.")
+            print "Illegal move."
 
     return move
     
