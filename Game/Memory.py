@@ -1,42 +1,31 @@
-"""Generic object pickler and compressor
-
-This module saves and reloads compressed representations of generic Python
-objects to and from the disk.
-"""
-
-__author__ = "Bill McNeill <billmcn@speakeasy.net>"
-__version__ = "1.0"
 
 import pickle
 import gzip
 import os
 from numpy import array 
 
-def Save(object, filename='_memory_.dat'):
-	"""Saves an object to disk
+def Save(obj, filename='_memory_.dat'):
+    """Saves an object to disk
     
     Example:  Save([1,2,3])
-	"""
-	file = gzip.GzipFile(filename, 'wb')
-	file.write(pickle.dumps(object, 1))
-	file.close()
+    """
+
+    f = gzip.open(filename,'wb')
+    pickle.dump(obj,f)
+    f.close()
 
 
 def Load(filename='_memory_.dat'):
-	"""Loads an object from disk
+    """Loads an object from disk
 
     Example:  a=Load()
-	"""
-	file = gzip.GzipFile(filename, 'rb')
-	buffer = ""
-	while 1:
-		data = file.read()
-		if data == "":
-			break
-		buffer += data
-	object = pickle.loads(buffer)
-	file.close()
-	return object
+    """
+
+    f = gzip.open(filename,'rb')
+    obj = pickle.load(f)
+    f.close()
+
+    return obj
 
 
 
@@ -110,19 +99,19 @@ def recall(name='default'):
 
 
 if __name__ == "__main__":
-	import sys
-	import os.path
-	
-	class Object:
-		x = 7
-		y = "This is an object."
-	
-	filename = sys.argv[1]
-	if os.path.isfile(filename):
-		o = load(filename)
-		print("Loaded %s" % o)
-	else:
-		o = Object()
-		save(o, filename)
-		print("Saved %s" % o)
+    import sys
+    import os.path
+    
+    class Object:
+        x = 7
+        y = "This is an object."
+    
+    filename = sys.argv[1]
+    if os.path.isfile(filename):
+        o = load(filename)
+        print("Loaded %s" % o)
+    else:
+        o = Object()
+        save(o, filename)
+        print("Saved %s" % o)
 

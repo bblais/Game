@@ -1,20 +1,21 @@
 
 # coding: utf-8
 
-# In[5]:
+# In[10]:
 
 from Game import *
+from Game.minimax import *
 
 
 # ## Minimum necessary functions
 
-# In[6]:
+# In[11]:
 
 def initial_state():
     return 21
 
 
-# In[7]:
+# In[12]:
 
 def valid_moves(state,player):
 
@@ -27,20 +28,20 @@ def valid_moves(state,player):
  
 
 
-# In[8]:
+# In[13]:
 
 def show_state(state):
     print("There are ",state," sticks left.")
 
 
-# In[9]:
+# In[14]:
 
 def update_state(state,player,move):
     new_state=state-move
     return new_state
 
 
-# In[13]:
+# In[15]:
 
 def win_status(state,player):
     if state==1:
@@ -53,7 +54,7 @@ def win_status(state,player):
 
 # ## Agents
 
-# In[14]:
+# In[16]:
 
 # agents
 
@@ -66,27 +67,35 @@ def human_move(state,player):
     return move
 
 
+def minimax_move(state,player):
+
+    values,moves=minimax_values(state,player)
+    return top_choice(moves,values)
+    
+    
+minimax_agent=Agent(minimax_move)
 human_agent=Agent(human_move)
 random_agent=Agent(random_move)
 
 
 # ## Run against a person
 
-# In[15]:
+# In[17]:
+
 
 g=Game(number_of_games=1)
-g.run(human_agent,random_agent)
+g.run(human_agent,minimax_agent)
 g.report()
 
 
 # ## Run many times
 
-# In[19]:
+# In[18]:
 
 
 g=Game(number_of_games=100)
 g.display=False
-g.run(random_agent,random_agent)
+g.run(minimax_agent,random_agent)
 g.report()
 
 

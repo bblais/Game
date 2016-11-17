@@ -66,13 +66,13 @@ def human_move(state,player):
     return move
 
 
-human_agent=Agent(human_move)
-random_agent=Agent(random_move)
-
-
 # ## Run against a person
 
 # In[15]:
+
+human_agent=Agent(human_move)
+random_agent=Agent(random_move)
+
 
 g=Game(number_of_games=1)
 g.run(human_agent,random_agent)

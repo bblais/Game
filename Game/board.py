@@ -102,15 +102,111 @@ class Board(object):
         for row in tempboard.rows(length):
             yield row
 
-    def get_moves(self,player,m):
+    def _get_moves(self,player,m):
         
         if 'x' in m:
             capture=True
             m=m.replace('x','')
         else:
             capture=False
-        
+
+        if 'j' in m:
+            jump=True
+            m=m.replace('j','')
+        else:
+            jump=False      
+
         all_moves=[]
+
+        if jump:
+            if m=='n':
+                for col in self.col_positions(3):
+                    p1,pm,p2=col  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p2]==player and self[p1]==0 and 
+                        self[pm]!=0 and self[pm]!=player):
+                            all_moves.append( [p2,p1] )
+
+            if m=='s':
+                for col in self.col_positions(3):
+                    p1,pm,p2=col  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p1]==player and self[p2]==0 and 
+                        self[pm]!=0 and self[pm]!=player):
+                            all_moves.append( [p1,p2] )
+            
+            if m=='e':
+                for row in self.row_positions(3):
+                    p1,pm,p2=row  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p1]==player and self[p2]==0 and 
+                        self[pm]!=0 and self[pm]!=player):
+                            all_moves.append( [p1,p2] )
+
+            if m=='w':
+                for row in self.col_positions(3):
+                    p1,pm,p2=row  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p2]==player and self[p1]==0 and 
+                        self[pm]!=0 and self[pm]!=player):
+                            all_moves.append( [p2,p1] )
+
+            if m=='ne':
+                for diag in self.diag_positions(3):
+                    p1,pm,p2=diag  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p2]==player and self[p1]==0 and 
+                            p2-p1==2*self.shape[1]-2 and
+                            self[pm]!=0 and self[pm]!=player):
+                        all_moves.append( [p2,p1] )
+
+            if m=='nw':
+                for diag in self.diag_positions(3):
+                    p1,pm,p2=diag  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+                    
+                    if (self[p2]==player and self[p1]==0 and 
+                            p2-p1==2*self.shape[1]+2 and
+                            self[pm]!=0 and self[pm]!=player):
+                        all_moves.append( [p2,p1] )
+
+            if m=='se':
+                for diag in self.diag_positions(3):
+                    p1,pm,p2=diag  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p1]==player and self[p2]==0 and 
+                            p2-p1==2*self.shape[1]+2 and
+                            self[pm]!=0 and self[pm]!=player):
+                        all_moves.append( [p1,p2] )
+
+            if m=='se':
+                for diag in self.diag_positions(3):
+                    p1,pm,p2=diag  # p1 is always less than p2
+                    if p1>p2:
+                        p1,p2=p2,p1
+
+                    if (self[p1]==player and self[p2]==0 and 
+                            p2-p1==2*self.shape[1]-2 and
+                            self[pm]!=0 and self[pm]!=player):
+                        all_moves.append( [p1,p2] )
+
+            return all_moves
+
+
+        # no jump
         if m=='n':
             for col in self.col_positions(2):
                 p1,p2=col  # p1 is always less than p2
@@ -215,7 +311,7 @@ class Board(object):
             m=move_string.split(',')
             for move in m:
                 move=move.lower().strip()
-                all_moves.extend(self.get_moves(player,move))
+                all_moves.extend(self._get_moves(player,move))
         return all_moves
 
     def col_positions(self,length=None):
