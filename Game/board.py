@@ -11,7 +11,16 @@ class Board(object):
         self.dimension=len(self.shape)
         self.board=[0]*prod(args)
         self.pieces=None
+        self.team={}
+        for i in range(3):
+            self.team[i]=i
         
+    def __eq__(self,other):
+        try:
+            return other.board==self.board
+        except AttributeError:
+            return False
+
     def immutable(self):
         return tuple(self.board)
         
@@ -63,7 +72,7 @@ class Board(object):
         
     def rc_from_index(self,index):
         if isinstance(index,list):
-            rc=[rc_from_index(i) for i in index]
+            rc=[self.rc_from_index(i) for i in index]
             return rc
             
         if len(self.shape)==1:
@@ -103,7 +112,10 @@ class Board(object):
             yield row
 
     def _get_moves(self,player,m):
-        
+        for i in range(max(self.board)+1):
+            if i not in self.team:
+                self.team[i]=i
+
         if 'x' in m:
             capture=True
             m=m.replace('x','')
@@ -126,7 +138,8 @@ class Board(object):
                         p1,p2=p2,p1
 
                     if (self[p2]==player and self[p1]==0 and 
-                        self[pm]!=0 and self[pm]!=player):
+                        self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                             all_moves.append( [p2,p1] )
 
             if m=='s':
@@ -136,7 +149,8 @@ class Board(object):
                         p1,p2=p2,p1
 
                     if (self[p1]==player and self[p2]==0 and 
-                        self[pm]!=0 and self[pm]!=player):
+                        self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                             all_moves.append( [p1,p2] )
             
             if m=='e':
@@ -146,7 +160,8 @@ class Board(object):
                         p1,p2=p2,p1
 
                     if (self[p1]==player and self[p2]==0 and 
-                        self[pm]!=0 and self[pm]!=player):
+                        self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                             all_moves.append( [p1,p2] )
 
             if m=='w':
@@ -156,7 +171,8 @@ class Board(object):
                         p1,p2=p2,p1
 
                     if (self[p2]==player and self[p1]==0 and 
-                        self[pm]!=0 and self[pm]!=player):
+                        self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                             all_moves.append( [p2,p1] )
 
             if m=='ne':
@@ -167,7 +183,8 @@ class Board(object):
 
                     if (self[p2]==player and self[p1]==0 and 
                             p2-p1==2*self.shape[1]-2 and
-                            self[pm]!=0 and self[pm]!=player):
+                            self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                         all_moves.append( [p2,p1] )
 
             if m=='nw':
@@ -178,7 +195,8 @@ class Board(object):
                     
                     if (self[p2]==player and self[p1]==0 and 
                             p2-p1==2*self.shape[1]+2 and
-                            self[pm]!=0 and self[pm]!=player):
+                            self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                         all_moves.append( [p2,p1] )
 
             if m=='se':
@@ -189,10 +207,11 @@ class Board(object):
 
                     if (self[p1]==player and self[p2]==0 and 
                             p2-p1==2*self.shape[1]+2 and
-                            self[pm]!=0 and self[pm]!=player):
+                            self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                         all_moves.append( [p1,p2] )
 
-            if m=='se':
+            if m=='sw':
                 for diag in self.diag_positions(3):
                     p1,pm,p2=diag  # p1 is always less than p2
                     if p1>p2:
@@ -200,7 +219,8 @@ class Board(object):
 
                     if (self[p1]==player and self[p2]==0 and 
                             p2-p1==2*self.shape[1]-2 and
-                            self[pm]!=0 and self[pm]!=player):
+                            self[pm]!=0 and self[pm]!=player and
+                        self.team[player]!=self.team[self[pm]]):
                         all_moves.append( [p1,p2] )
 
             return all_moves
@@ -213,7 +233,8 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p2]==player and self[p1]!=0 and self[p1]!=player:
+                    if (self[p2]==player and self[p1]!=0 and self[p1]!=player and
+                        self.team[player]!=self.team[self[p1]]):
                         all_moves.append( [p2,p1] )
                 else:
                     if self[p2]==player and self[p1]==0:
@@ -225,7 +246,8 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p1]==player and self[p2]!=0 and self[p2]!=player:
+                    if (self[p1]==player and self[p2]!=0 and self[p2]!=player and
+                        self.team[player]!=self.team[self[p2]]):
                         all_moves.append( [p1,p2] )
                 else:
                     if self[p1]==player and self[p2]==0:
@@ -237,7 +259,8 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p1]==player and self[p2]!=0 and self[p2]!=player:
+                    if (self[p1]==player and self[p2]!=0 and self[p2]!=player and
+                        self.team[player]!=self.team[self[p2]]):
                         all_moves.append( [p1,p2] )
                 else:
                     if self[p1]==player and self[p2]==0:
@@ -249,7 +272,8 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p2]==player and self[p1]!=0 and self[p1]!=player:
+                    if (self[p2]==player and self[p1]!=0 and self[p1]!=player and
+                        self.team[player]!=self.team[self[p1]]):
                         all_moves.append( [p2,p1] )
                 else:
                     if self[p2]==player and self[p1]==0:
@@ -261,7 +285,9 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p2]==player and self[p1]!=0 and self[p1]!=player and p2-p1==self.shape[1]-1:
+                    if (self[p2]==player and self[p1]!=0 and self[p1]!=player 
+                        and p2-p1==self.shape[1]-1 and
+                        self.team[player]!=self.team[self[p1]]):
                         all_moves.append( [p2,p1] )
                 else:
                     if self[p2]==player and self[p1]==0 and p2-p1==self.shape[1]-1:
@@ -273,7 +299,9 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p2]==player  and self[p1]!=0 and self[p1]!=player and p2-p1==self.shape[1]+1:
+                    if (self[p2]==player  and self[p1]!=0 and self[p1]!=player and 
+                        p2-p1==self.shape[1]+1 and
+                        self.team[player]!=self.team[self[p1]]):
                         all_moves.append( [p2,p1] )
                 else:                
                     if self[p2]==player and self[p1]==0 and p2-p1==self.shape[1]+1:
@@ -285,7 +313,9 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p1]==player and self[p2]!=0 and self[p2]!=player and p2-p1==self.shape[1]+1:
+                    if (self[p1]==player and self[p2]!=0 and self[p2]!=player and 
+                        p2-p1==self.shape[1]+1 and
+                        self.team[player]!=self.team[self[p2]]):
                         all_moves.append( [p1,p2] )
                 else:
                     if self[p1]==player and self[p2]==0 and p2-p1==self.shape[1]+1:
@@ -297,7 +327,9 @@ class Board(object):
                 if p1>p2:
                     p1,p2=p2,p1
                 if capture:
-                    if self[p1]==player  and self[p2]!=0 and self[p2]!=player and p2-p1==self.shape[1]-1:
+                    if (self[p1]==player  and self[p2]!=0 and self[p2]!=player and 
+                        p2-p1==self.shape[1]-1 and
+                        self.team[player]!=self.team[self[p2]]):
                         all_moves.append( [p1,p2] )
                 else:                    
                     if self[p1]==player and self[p2]==0 and p2-p1==self.shape[1]-1:

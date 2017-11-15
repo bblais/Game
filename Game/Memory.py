@@ -4,6 +4,7 @@ import gzip
 import os
 from numpy import array 
 
+
 def Save(obj, filename='_memory_.dat'):
     """Saves an object to disk
     
@@ -11,7 +12,7 @@ def Save(obj, filename='_memory_.dat'):
     """
 
     f = gzip.open(filename,'wb')
-    pickle.dump(obj,f)
+    pickle.dump(obj,f,protocol=2)
     f.close()
 
 

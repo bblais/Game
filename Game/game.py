@@ -7,7 +7,7 @@ import sys
 from .Memory import Remember as Remember2
 import os
 
-import tkinter.simpledialog
+from random import randint
 
 
 def sortedby(L,values,reverse=False):
@@ -36,6 +36,7 @@ def Remember(*args,**kwargs):
 
 
 def gui_input(prompt=''):
+    import tkinter.simpledialog
     val=tkinter.simpledialog.askstring('Input', prompt)
     if not val:
         return ''
@@ -211,6 +212,7 @@ class Game(object):
         self.number_of_games=number_of_games
         self.wins=[]
         
+        self.check_repeated_states=False
         self.save_states=False
         
         self.games=[]
@@ -294,6 +296,9 @@ class Game(object):
             player,other_player=1,2
             agents=[None,agent1,agent2]  # make a 1-index list
 
+            visited_states={1:[],2:[]}
+    
+
             for agent in agents[1:]:
                 agent.states=[]
                 agent.actions=[]
@@ -304,15 +309,19 @@ class Game(object):
                 agent.move_args=len(arginfo.args)
             
             move_count=1
+            
             while True:
                 agents[player].move_count=move_count
 
-                if move_count==player:
+                if move_count==player:  # first move
                     try:
                         agents[player].pre(self.state,agents[player])
                     except (AttributeError,KeyError):
                         pass
-                        
+                    
+                    
+
+
                 valid_move=False
                 count=0
                 auto_lose=False
@@ -350,6 +359,8 @@ class Game(object):
                 if auto_lose:
                     status='lose'
                     break
+
+                visited_states[player].append(deepcopy(self.state))
                 
                 new_state=self.update_state(deepcopy(self.state),player,move)
                 if new_state is None:
@@ -369,6 +380,12 @@ class Game(object):
                     raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % str(status))
 
                 if status:
+                    break
+                elif not self.check_repeated_states:
+                    pass
+                elif any([self.state==x for x in visited_states[other_player]]):
+                    # give your opponent a repeated state and you lose
+                    status='lose'
                     break
 
                 if repeat:
@@ -640,7 +657,10 @@ def random_choice(choices):
         choices=[]
         weights=[]
         for key in list(Q.keys()):
-            choices.append(key)
+            if isinstance(key,tuple):
+                choices.append(list(key))
+            else:
+                choices.append(key)                
             weights.append(Q[key])
 
     
@@ -654,7 +674,10 @@ def top_choice(choices,weights=None):
         choices=[]
         weights=[]
         for key in list(Q.keys()):
-            choices.append(key)
+            if isinstance(key,tuple):
+                choices.append(list(key))
+            else:
+                choices.append(key)                
             weights.append(Q[key])
 
     i=argmax(weights)
@@ -668,7 +691,10 @@ def weighted_choice(choices,weights=None):
         choices=[]
         weights=[]
         for key in list(Q.keys()):
-            choices.append(key)
+            if isinstance(key,tuple):
+                choices.append(list(key))
+            else:
+                choices.append(key)                
             weights.append(Q[key])
 
     # calculate the cumulative sum
