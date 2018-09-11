@@ -2,6 +2,10 @@
 
 This is a Game simulator, written in Python, for making simple board and card games.
 
+## Install
+
+    pip install git+git://github.com/bblais/Game
+
 ## Definitions
 
 ### These functions need to be named exactly this:
