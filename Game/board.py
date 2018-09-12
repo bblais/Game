@@ -367,18 +367,6 @@ class Board(object):
         
     def rows(self,length=None):
         if self.dimension==1:
-            for r in range(len(self.board)):
-                d=[]
-                keep=True
-                for l in range(length):
-                    try:
-                        d.append(self[r+l])
-                    except IndexError:
-                        keep=False
-                        break
-                if keep:
-                    yield d
-                
             yield self.board
         elif self.dimension==2:
             if length==None:
