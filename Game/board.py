@@ -37,6 +37,10 @@ class Board(object):
     def index_from_rc(self,rc,c=None):
         if not c is None:
             rc=[rc,c]
+
+        if isinstance(rc,str):
+            rc=[int(rc[1:])-1,ord(rc[0])-97]
+
         if isinstance(rc,int):
             index=rc
             if rc>=len(self.board) or rc<0:
@@ -587,9 +591,27 @@ class Board(object):
         else:
             raise ValueError("Not implemented for dims 4+")
 
-    def show_locations(self):
+    def show_locations(self,notation='index'):
         loc=Board(*self.shape)
         loc.board=list(range(prod(self.shape)))
+
+        if notation=='index':
+            pass
+        elif notation.startswith('alg'):
+            if self.dimension==1:
+                for i in range(len(self.board)):
+                    loc[i]='%c1' % (97+i)
+            elif self.dimension==2:
+                p=[]
+                for i in range(prod(self.shape)):
+                    r,c=self.rc_from_index(i)
+                    p.append('%c%d' % (97+c,self.shape[0]-r))
+
+                loc.pieces=p
+        else:
+            raise ValueError("notation %s not implemented" % notation)
+
+
         print(loc)
         
     def __repr__(self):
