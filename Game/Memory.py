@@ -4,6 +4,7 @@ import gzip
 import os
 from numpy import array 
 
+             
 
 def Save(obj, filename='_memory_.dat'):
     """Saves an object to disk
@@ -30,7 +31,7 @@ def Load(filename='_memory_.dat'):
 
 
 
-def Remember(*args,**kwargs):
+def RememberOrig(*args,**kwargs):
 
     try:
         filename=kwargs['filename']

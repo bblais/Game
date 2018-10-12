@@ -4,12 +4,104 @@ from copy import deepcopy
 from copy import deepcopy as copy
 import sys
 
-from .Memory import Remember as Remember2
+#from .Memory import Remember as Remember2
+#from .Memory import Remember
 import os
 
 from random import randint
 
+import zipfile
+import json
 
+def tuple2str(var):
+    from copy import deepcopy
+    
+    if not isinstance(var,dict):
+        return var
+    
+    newvar={}
+    for key in var:
+        if isinstance(key,tuple):
+            newvar[str(key)]=tuple2str(var[key])
+        else:
+            newvar[key]=tuple2str(var[key])
+            
+        
+    return newvar
+
+def str2table(var):
+    from copy import deepcopy
+    
+    if not isinstance(var,dict):
+        return var
+    
+    newvar=Table()
+    for key in var:
+        if isinstance(key,str) and key.startswith('(') and key.endswith(')'):
+            newkey=tuple(int(x) for x in key[1:-1].split(","))
+            newvar[newkey]=str2table(var[key])
+        else:
+            try:
+                newkey=int(key)
+            except ValueError:
+                newkey=key
+                
+            newvar[newkey]=str2table(var[key])
+            
+        
+    return newvar
+
+
+def SaveTable(obj, filename='_memory_.json'):
+    """Saves an object to disk
+    
+    Example:  Save([1,2,3])
+    """
+    
+    if filename.endswith('.zip'):
+        with zipfile.ZipFile(filename, 'w', compression=zipfile.ZIP_DEFLATED) as f:
+            f.writestr(filename[:-4],json.dumps(tuple2str(obj),sort_keys=True, indent=4))
+    else:
+        with open(filename, 'w') as f:
+            json.dump(tuple2str(obj),f, sort_keys=True, indent=4)
+
+def LoadTable(filename='_memory_.json'):
+    """Loads an object from disk
+
+    Example:  a=Load()
+    """
+
+    if '.zip' in filename:
+        with zipfile.ZipFile(filename, 'r') as f:
+            data = f.read(filename[:-4])
+            obj = json.loads(data)
+    else:
+        with open(filename,'r') as f:
+            obj = json.load(f)
+
+            
+    obj=str2table(obj)
+        
+        
+    return obj
+
+def Remember(T=None,filename='_memory_.json'):
+    import os
+        
+    if T is None:  # load                  
+        if os.path.exists(filename):
+            T=LoadTable(filename)
+        else:
+            T=Table()
+            SaveTable(T,filename)
+            
+        return T
+    else:
+        SaveTable(T,filename)
+
+    
+
+ 
 def sortedby(L,values,reverse=False):
 
     data=list(zip(values,L))
@@ -18,21 +110,21 @@ def sortedby(L,values,reverse=False):
     new_L=[x[1] for x in data]
     return new_L
 
-def Remember(*args,**kwargs):
+# def Remember(*args,**kwargs):
 
-    try:
-        filename=kwargs['filename']
-    except KeyError:
-        filename='_agentmemory_.dat'
+#     try:
+#         filename=kwargs['filename']
+#     except KeyError:
+#         filename='_agentmemory_.dat'
     
-    if not os.path.exists(filename):
-        # initialize to empty table
-        print("Resetting the database",filename)
-        Remember2(Table(),filename=filename)
+#     if not os.path.exists(filename):
+#         # initialize to empty table
+#         print("Resetting the database",filename)
+#         Remember2(Table(),filename=filename)
         
-    kwargs.update(filename=filename)
+#     kwargs.update(filename=filename)
     
-    return Remember2(*args,**kwargs)
+#     return Remember2(*args,**kwargs)
 
 
 def gui_input(prompt=''):
@@ -128,11 +220,11 @@ class Table(dict):
         return dict.pop(self, key, def_val)
     
     def save(self,filename):
-        Save2(self,filename)
+        SaveTable(self,filename)
         
     def load(self,filename):
     
-        obj=Load2(filename)
+        obj=LoadTable(filename)
         
         for key in obj:
             self[key]=obj[key]
