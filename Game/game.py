@@ -589,6 +589,8 @@ class CardGame(object):
 
 
                 status=self.win_status(self.state,player)
+                if not status in ['win','lose','stalemate',None]:
+                    raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
 
                 if status:
                     break

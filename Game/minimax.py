@@ -479,7 +479,6 @@ def minimax_values(current_state,player,maxdepth=inf,
             else:
                 value=minvalue_ab_depth(state,other_player,maxdepth=maxdepth)
             values.append(value)
-            states.append(state)
     else:        
         for state,repeat in zip(available_states,repeats):
             if repeat:
@@ -487,7 +486,6 @@ def minimax_values(current_state,player,maxdepth=inf,
             else:
                 value=minvalue_ab(state,other_player,maxdepth=maxdepth)
             values.append(value)
-            states.append(state)
 
     # sort by value
     values,moves=mysort(values,moves,reverse=True)
