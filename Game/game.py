@@ -65,11 +65,16 @@ def SaveTable(obj, filename='_memory_.json'):
         with open(filename, 'w') as f:
             json.dump(tuple2str(obj),f, sort_keys=True, indent=4)
 
-def LoadTable(filename='_memory_.json'):
+def LoadTable(filename='_memory_.json',handle_exist=True):
     """Loads an object from disk
 
     Example:  a=Load()
     """
+    if handle_exist:
+        if not os.path.exists(filename):
+            T=Table()
+            SaveTable(T,filename)
+            return T
 
     if '.zip' in filename:
         with zipfile.ZipFile(filename, 'r') as f:
@@ -358,12 +363,16 @@ class Game(object):
         wins=self.wins
         N_tie=wins.count(0)
         N_win=wins.count(1)
-        N_lose=wins.count(2)
+        N_lose=wins.count(2)+wins.count(3)
+        N_autolose=wins.count(3)
         N_games=len(wins)
         print("Total number of games: ",N_games)
         print("Winning %.2f percent" % (100.0*N_win/N_games))
         print("Losing %.2f percent" % (100.0*N_lose/N_games))
         print("Tie %.2f percent" % (100.0*N_tie/N_games))
+        if N_autolose:
+            print("Illegal Moves Causing Loss %.2f percent" % (100.0*N_autolose/N_games))
+
         
 
     def run(self,agent1,agent2):
@@ -501,7 +510,10 @@ class Game(object):
             elif status=='lose':
                 if self.display:
                     _print("Player ",other_player,"won.")
-                self.wins.append(other_player)
+                if auto_lose:
+                    self.wins.append(3)
+                else:
+                    self.wins.append(other_player)
                 stati[player]='lose'
                 stati[other_player]='win'
             else: # stalemate
