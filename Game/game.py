@@ -21,8 +21,16 @@ def tuple2str(var):
     
     newvar={}
     for key in var:
-        if isinstance(key,tuple):
-            newvar[str(key)]=tuple2str(var[key])
+        if isinstance(key,tuple):  # either a board or board and player
+            newtuple=[]
+            for v in key:
+                try:
+                    len(v)
+                    newtuple.append(tuple(v))
+                except TypeError:
+                    newtuple.append(v)
+
+            newvar[str(tuple(newtuple))]=tuple2str(var[key])
         else:
             newvar[key]=tuple2str(var[key])
             
@@ -37,8 +45,8 @@ def str2table(var):
     
     newvar=Table()
     for key in var:
-        if isinstance(key,str) and key.startswith('(') and key.endswith(')'):
-            newkey=tuple(int(x) for x in key[1:-1].split(","))
+        if isinstance(key,str) and key.startswith('(') and key.endswith(')'): # this is a tuple
+            newkey=eval(key)
             newvar[newkey]=str2table(var[key])
         else:
             try:
