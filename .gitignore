@@ -13,3 +13,7 @@ docs/_build/
 .ipynb_checkpoints
 
 cpai
+
+example notebooks/Dodgem Game\.ipynb
+
+example notebooks/mcts_dodgem_data\.json

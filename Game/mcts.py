@@ -35,7 +35,7 @@ def mcts_values(current_state,player,T,seconds=30,max_moves=100):
     
     moves=valid_moves(current_state,player)
     if len(moves)==1:
-        return moves[0]
+        return [[1.0],moves]
     
 
     original_state=deepcopy(current_state)
@@ -61,7 +61,7 @@ def mcts_values(current_state,player,T,seconds=30,max_moves=100):
     )
     
     
-    values=[T[(S,player)].get('wins',0)/T[(S,player)].get('plays',1) for S in available_states]
+    values=[float(T[(S,player)].get('wins',0))/T[(S,player)].get('plays',1) for S in available_states]
     
     # sort by value
     values,moves=mysort(values,moves,reverse=True)
@@ -130,6 +130,12 @@ def mcts_run_simulation(state,player,max_moves,T):
             plays=[T[(S,player)]['plays'] for S in available_states]
             wins=[T[(S,player)]['wins'] for S in available_states]
             
+            if not sum(plays):
+                print([T[(S,player)] for S in available_states])
+
+            if not all(plays):
+                print([T[(S,player)] for S in available_states])
+
             log_total = log(sum(plays))
             values=[w/p+C*sqrt(log_total/p) for w,p in zip(wins,plays)]
             values,moves=mysort(values,moves,reverse=True)
@@ -146,7 +152,7 @@ def mcts_run_simulation(state,player,max_moves,T):
         # note - this is the state *after* the move by player
         visited_state_player.append((state,player))
         if first_time and not (state,player) in T:  # not sure why only the first time this call
-            T[(state,player)]={'plays':0,'wins':0}
+            T[(state,player)]={'plays':1,'wins':0}
             first_time=False
         
         if not status is None:  # end game
