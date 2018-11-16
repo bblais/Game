@@ -55,13 +55,18 @@ def mcts_values(current_state,player,T,seconds=30,max_moves=100):
     available_states=[update_state(deepcopy(current_state),player,move)
                                     for move in moves]    
 
-    percent_wins,move=max(
-        (T[(S,player)].get('wins',0)/T[(S,player)].get('plays',1),
-         move) for S,move in zip(available_states,moves)
-    )
+
+    for S in available_states:
+        if (S,player) not in T:
+            T[(S,player)]={'wins':0,'plays':1}
+
+    # percent_wins,move=max(
+    #     (T[(S,player)]['wins']/T[(S,player)]['plays'],
+    #      move) for S,move in zip(available_states,moves)
+    # )
     
     
-    values=[float(T[(S,player)].get('wins',0))/T[(S,player)].get('plays',1) for S in available_states]
+    values=[float(T[(S,player)]['wins'])/T[(S,player)]['plays'] for S in available_states]
     
     # sort by value
     values,moves=mysort(values,moves,reverse=True)
