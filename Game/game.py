@@ -45,7 +45,7 @@ def str2table(var):
     
     newvar=Table()
     for key in var:
-        if isinstance(key,str) and key.startswith('(') and key.endswith(')'): # this is a tuple
+        if (isinstance(key,str) or isinstance(key,unicode)) and key.startswith('(') and key.endswith(')'): # this is a tuple
             newkey=eval(key)
             newvar[newkey]=str2table(var[key])
         else:
