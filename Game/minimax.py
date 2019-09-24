@@ -7,6 +7,8 @@ def bad_heuristic(current_state,player):
     return 0
     
 def minimax_heuristic(current_state,player):
+    global heuristic
+        
     try:
         if heuristic:
             pass
