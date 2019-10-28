@@ -21,6 +21,14 @@ class Board(object):
         except AttributeError:
             return False
 
+    def __int__(self):
+        N=9  # first digit
+        for v in self.board:
+            N=N*10+v
+            
+        return N
+    
+
     def immutable(self):
         return tuple(self.board)
         
