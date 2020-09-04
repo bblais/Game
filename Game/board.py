@@ -4,6 +4,12 @@ def prod(A):
         p*=val
     return p
 
+try:
+    from numpy import int64
+except ImportError:
+    int64 = int
+
+
 class Board(object):
 
     def __init__(self,*args):
@@ -49,7 +55,7 @@ class Board(object):
         if isinstance(rc,str):
             rc=[int(rc[1:])-1,ord(rc[0])-97]
 
-        if isinstance(rc,int):
+        if isinstance(rc,(int,int64)):
             index=rc
             if rc>=len(self.board) or rc<0:
                 raise IndexError("Illegal index")

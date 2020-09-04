@@ -177,13 +177,51 @@ def human_move(state,player):
 # In[10]:
 
 
-human_agent=Agent(human_move)
+
+
 random_agent=Agent(random_move)
+human_agent=Agent(human_move)
 
 
-g=Game(number_of_games=1)
-g.run(human_agent,random_agent)
-g.report()   # state the percentage of wins, ties, etc...
+# In[11]:
+
+
+from Game.mcts import *
+def mcts_move(state,player,info):
+    T=info.T
+    values,moves=mcts_values(state,player,T,info.seconds)
+    return top_choice(moves,values)
+
+mcts_agent=Agent(mcts_move)
+mcts_agent.T=LoadTable(filename='mcts_data_TTT.json')
+mcts_agent.seconds=1
+
+
+# In[12]:
+
+
+g=Game()
+g.display=True
+wins=g.run(random_agent,mcts_agent)
+g.report()
+
+
+# In[13]:
+
+
+SaveTable(mcts_agent.T,filename='mcts_data_TTT.json')
+
+
+# In[14]:
+
+
+T=LoadTable(filename='mcts_data_TTT.json')
+
+
+# In[15]:
+
+
+T
 
 
 # In[ ]:

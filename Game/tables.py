@@ -84,6 +84,30 @@ class Table(dict):
                 k=make_immutable(k)
                 dict.__setitem__(self, k.lower(), v)
             
+
+    def max(self):
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        return max(s)
+
+    def argmax(self):
+        
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        argmax=max(zip(s, range(len(s))))[1]
+        return argmax
+
+    def min(self):
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        return min(s)
+
     def __getitem__(self, key):
         key=make_immutable(key)
         return dict.__getitem__(self, key)

@@ -54,7 +54,9 @@ class Struct(dict):
         
         self[name]=val
 
-
+def no_update(observation,action,reward,done,memory):
+    return
+    
 
 class Agent(object):
     
@@ -62,6 +64,10 @@ class Agent(object):
         
         self.stuff=dict(*args,**kwargs)
         self.stuff['move']=move
+        if 'update' not in self.stuff:
+            self.stuff['update']=no_update
+        if 'memory' not in self.stuff:
+            self.stuff['memory']=Struct()
         
         self._initialized=True
         
@@ -571,10 +577,18 @@ def random_choice(choices):
             else:
                 choices.append(key)                
             weights.append(Q[key])
-
+            
+        return random.choice(choices)
+    
+    try:
+        choices=list(range(len(choices.ravel())))
+    except AttributeError:
+        choices=list(range(len(choices)))
     
     return random.choice(choices)
-        
+
+def all_same(L):
+  return all(x == L[0] for x in L)
 
 def top_choice(choices,weights=None):
     
@@ -589,8 +603,27 @@ def top_choice(choices,weights=None):
                 choices.append(key)                
             weights.append(Q[key])
 
-    i=argmax(weights)
-    return choices[i]
+        if all_same(weights):
+            return random.choice(choices)
+
+        i=argmax(weights)
+        return choices[i]
+
+    if weights is None:
+        try:
+            weights=choices.ravel()
+        except AttributeError:
+            weights=choices
+
+        i=argmax(weights)
+        return i
+    else:
+        if all_same(weights):
+            return random.choice(choices)
+
+        i=argmax(weights)
+        return choices[i]
+
         
 def weighted_choice(choices,weights=None):
     import random
@@ -605,6 +638,14 @@ def weighted_choice(choices,weights=None):
             else:
                 choices.append(key)                
             weights.append(Q[key])
+    elif weights is None:
+
+        try:
+            weights=choices.ravel()
+        except AttributeError:
+            weights=choices
+
+        choices=None
 
     # calculate the cumulative sum
     s=0.0
@@ -629,5 +670,12 @@ def weighted_choice(choices,weights=None):
     else:
         raise ValueError("Wrong random number: "+str(r)+" for "+str(norm_weights))
 
-    return choices[i]    
+    
+    if isinstance(choices,dict):  # given a dictionary
+        return choices[i]  
+    elif choices is None:
+        return i  
+    else:
+        return choices[i]
+
 
