@@ -21,7 +21,10 @@ class Storage(object):
         return s
         
     def __iadd__(self,other):
-        self.append(*other)
+        try:
+            self.append(*other)
+        except TypeError: # non-iterable
+            self.append(other)
         return self
         
     def append(self,*args):
@@ -143,6 +146,9 @@ def all_zero(mylist):
 def default_repeat_move(*args,**kwargs):
     return False
     
+def default_state_to_observation(state,player):
+    return state
+
 class Game(object):
     
     def __init__(self,number_of_games=1,**kwargs):
@@ -170,7 +176,8 @@ class Game(object):
     def available_states(self,state,player):
         
         states=[]
-        for move in self.valid_moves(state,player):
+        observation=self.state_to_observation(state,player)
+        for move in self.valid_moves(observation,player):
             newstate=self.update_state(deepcopy(state),player,move)
             if newstate is None:
                 raise ValueError("update_state returned None with state=%s and player=%d - Did you forget to return the state?" % (str(state),player))
@@ -178,6 +185,16 @@ class Game(object):
             
         return states
         
+        
+    def state_to_observation(self,state,player):
+        if 'state_to_observation' in self.parent_dict:
+            s2o=self.parent_dict['state_to_observation']
+            observation=s2o(state,player)
+        else:
+            observation=state
+
+        return observation
+
         
     def initial_state(self):
         if 'initial_state' in self.parent_dict:
@@ -197,7 +214,8 @@ class Game(object):
             raise AttributeError(name)
             
     def is_valid_move(self,player,move):
-        moves=self.valid_moves(self.state,player)
+        observation=self.state_to_observation(self.state,player)
+        moves=self.valid_moves(observation,player)
         try:
             list_move=list(move)  # deal with tuples
             return move in moves or list_move in moves
@@ -218,7 +236,16 @@ class Game(object):
         if N_autolose:
             print("Illegal Moves Causing Loss %.2f percent" % (100.0*N_autolose/N_games))
 
-        
+    def percent_win_lose_tie(self):
+        wins=self.wins
+        N_tie=wins.count(0)
+        N_win=wins.count(1)
+        N_lose=wins.count(2)+wins.count(3)
+        N_autolose=wins.count(3)
+        N_games=len(wins)
+
+        return 100.0*N_win/N_games,100.0*(N_lose+N_autolose)/N_games,100.0*N_tie/N_games
+
 
     def run(self,agent1,agent2):
 
@@ -261,11 +288,10 @@ class Game(object):
 
                 if move_count==player:  # first move
                     try:
-                        agents[player].pre(self.state,agents[player])
+                        observation=self.state_to_observation(self.state,player)
+                        agents[player].pre(observation,agents[player])
                     except (AttributeError,KeyError):
                         pass
-                    
-                    
 
 
                 valid_move=False
@@ -273,13 +299,15 @@ class Game(object):
                 auto_lose=False
                 
                 while not valid_move:
+                    observation=self.state_to_observation(self.state,player)
+
                     if self.display:
-                        self.show_state(self.state)
+                        self.show_state(observation)
 
                     if agents[player].move_args==3:
-                        move=agents[player].move(self.state,player,agents[player])
+                        move=agents[player].move(observation,player,agents[player])
                     else:
-                        move=agents[player].move(self.state,player)
+                        move=agents[player].move(observation,player)
                         
                     if move =='':
                         raise ValueError("Empty move quits. ")
@@ -296,10 +324,10 @@ class Game(object):
                         auto_lose=True
 
                 move_count+=1
-                agents[player].states.append(deepcopy(self.state))
+                agents[player].states.append(deepcopy(observation))
                 agents[player].actions.append(deepcopy(move))
                 agents[player].last_action=deepcopy(move)
-                agents[player].last_state=deepcopy(self.state)
+                agents[player].last_state=deepcopy(observation)
                 agents[player].last_player=player
 
                 if auto_lose:
@@ -322,7 +350,7 @@ class Game(object):
 
                 status=self.win_status(self.state,player)
 
-                if not status in ['win','lose','stalemate',None]:
+                if not status in ['win','lose','stalemate','tie',None]:
                     raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % str(status))
 
                 if status:
@@ -341,7 +369,7 @@ class Game(object):
 
 
             if self.display:
-                self.show_state(self.state)
+                self.show_state(observation)
                 
             stati=[None,None,None]
             if status=='win':
