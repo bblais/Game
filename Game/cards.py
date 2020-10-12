@@ -12,15 +12,15 @@ class Card(object):
         return newcard
 
     def _color(self):
-        if self.suit=='Spades' or self.suit=='Clubs':
-            return 'Black'
-        elif self.suit=='Hearts' or self.suit=='Diamonds':
-            return 'Red'
+        if self.suit=='S' or self.suit=='C':
+            return 'B'
+        elif self.suit=='H' or self.suit=='D':
+            return 'R'
         else:
             return None
 
     def __hash__(self):
-        return hash(str(self))  #  allow it in a dictionary        
+        return hash((self.suit,self.rank))  #  allow it in a dictionary        
 
     def __getattr__(self,item):
         if item=='color':
@@ -33,8 +33,8 @@ class Card(object):
 
     def __setattr__(self,item,value):
         if item=='suit':
-            suits={'h':'Hearts','s':'Spades','d':'Diamonds','c':'Clubs',
-                    'j':'Joker','n':None}
+            suits={'h':'H','s':'S','d':'D','c':'C',
+                    'j':'JK','n':None}
             if not value is None:                
                 value=suits[value.lower()[0]]
 
@@ -47,29 +47,48 @@ class Card(object):
         else:
             self.__setitem__(item, value)
 
-                        
     def __repr__(self):
+        # if self.rank==1:
+        #     rankstr='Ace'
+        # elif self.rank==11:
+        #     rankstr='Jack'
+        # elif self.rank==12:
+        #     rankstr='Queen'
+        # elif self.rank==13:
+        #     rankstr='King'
+        # elif self.rank is None:
+        #     rankstr='Nothing'
+        # else:
+        #     rankstr='%d' % self.rank
+            
+        # if self.suit=='Joker':
+        #     s='Joker'
+        # elif self.suit is None:
+        #     s=rankstr
+        # else:
+        #     s='%s of %s' % (rankstr,self.suit)
+        
         if self.rank==1:
-            rankstr='Ace'
+            rankstr='A'
         elif self.rank==11:
-            rankstr='Jack'
+            rankstr='J'
         elif self.rank==12:
-            rankstr='Queen'
+            rankstr='Q'
         elif self.rank==13:
-            rankstr='King'
+            rankstr='K'
         elif self.rank is None:
-            rankstr='Nothing'
+            rankstr='N'
         else:
             rankstr='%d' % self.rank
             
-        if self.suit=='Joker':
-            s='Joker'
+        if self.suit=='JK':
+            s='JK'
         elif self.suit is None:
             s=rankstr
         else:
-            s='%s of %s' % (rankstr,self.suit)
+            s='%s%s' % (rankstr,self.suit)
         
-        return s
+        return "'%s'" % s
         
     def match(self,other):
         if self==other:
