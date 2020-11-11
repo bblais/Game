@@ -128,15 +128,23 @@ def mcts_run_simulation(state,player,max_moves,T):
         state=deepcopy(state)
         
         moves=valid_moves(state,player)
+
+        if moves==[]:
+            raise ValueError("State\n%s has no moves for player %d" % (str(state),player))
+
+
         available_states=[update_state(deepcopy(state),player,move)
                                         for move in moves]    
         
+
         if all( [(S,player) in T for S in available_states] ):
+
             plays=[T[(S,player)]['plays'] for S in available_states]
             wins=[T[(S,player)]['wins'] for S in available_states]
             
             if not sum(plays):
                 print([T[(S,player)] for S in available_states])
+
 
             if not all(plays):
                 print([T[(S,player)] for S in available_states])
