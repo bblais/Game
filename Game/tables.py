@@ -56,6 +56,9 @@ def make_immutable(var):
         var=var.immutable()
     except AttributeError:
         var=deepcopy(var)
+
+    if isinstance(var,tuple):
+        var=list(var)
     
     if isinstance(var,list):
         for i in range(len(var)):
