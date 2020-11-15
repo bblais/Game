@@ -118,7 +118,12 @@ class Table(dict):
 
     def __contains__(self, key):
         key=make_immutable(key)
-        return dict.__contains__(self, key)
+        try:
+            value=dict.__contains__(self, key)
+        except TypeError:
+            print("Key is %s" % str(key))
+            raise
+        return value
 
     def has_key(self, key):
         key=make_immutable(key)
