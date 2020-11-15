@@ -111,6 +111,7 @@ def top_choice(choices,weights=None):
 
 def mcts_run_simulation(state,player,max_moves,T):
     import random
+    from Game.tables import make_immutable
 
     visited_state_player=[]
     original_player=player
@@ -135,7 +136,7 @@ def mcts_run_simulation(state,player,max_moves,T):
 
         available_states=[update_state(deepcopy(state),player,move)
                                         for move in moves]    
-        
+        available_states=[make_immutable(S) for S in available_states]
 
         if all( [(S,player) in T for S in available_states] ):
 
