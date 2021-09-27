@@ -122,7 +122,7 @@ def maxvalue(current_state,player,depth=0,maxdepth=inf):
     else:
         return max(values)
     
-def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
+def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
         other_player=2
@@ -131,6 +131,12 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     if depth>maxdepth:
         return minimax_heuristic(current_state,player)
+
+    if verbose:
+        tabs='\t'*depth
+        print(tabs,"MIN value current state\n")
+        s=current_state
+        print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
     # since win_status is called with a player and an updated state
     # the current state is really the updated state from the
@@ -141,10 +147,19 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
         raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
 
     if status=='win':  # bad for min
+        if verbose:
+            print(tabs,"end state value: 1")
+
         return 1
     elif status=='lose':  # good for min
+        if verbose:
+            print(tabs,"end state value: -1")
+
         return -1
     elif status=='stalemate':  # draw
+        if verbose:
+            print(tabs,"end state value: 0")
+
         return 0
 
     moves=valid_moves(current_state,player)
@@ -152,6 +167,12 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
                                 for move in moves]
     repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
+    if verbose:
+        print(tabs,"Getting MAX value for states")
+        for s in available_states:
+            print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
+
+
     value=inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
@@ -170,7 +191,7 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
     else:
         return value
     
-def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
+def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
         other_player=2
@@ -179,6 +200,13 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     if depth>maxdepth:
         return minimax_heuristic(current_state,player)
+
+    if verbose:
+        tabs='\t'*depth
+        print(tabs,"MAX value current state\n")
+        s=current_state
+        print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
+
 
     # since win_status is called with a player and an updated state
     # the current state is really the updated state from the
@@ -189,10 +217,16 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
         raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
 
     if status=='win':  # bad for max
+        if verbose:
+            print(tabs,"end state value: -1")
         return -1
     elif status=='lose':  # good for max
+        if verbose:
+            print(tabs,"end state value: 1")
         return 1
     elif status=='stalemate':  # draw
+        if verbose:
+            print(tabs,"end state value: 0")
         return 0
 
     moves=valid_moves(current_state,player)
@@ -200,6 +234,12 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
                                 for move in moves]
     repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
+    if verbose:
+        print(tabs,"Getting MIN value for states")
+        for s in available_states:
+            print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
+
+
     value=-inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
@@ -219,7 +259,7 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
     else:
         return value
     
-def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
+def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
         other_player=2
@@ -228,6 +268,12 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     if depth>maxdepth:
         return minimax_heuristic(current_state,player)+depth/1000.0
+
+    if verbose:
+        tabs='\t'*depth
+        print(tabs,"MIN value current state\n")
+        s=current_state
+        print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
     # since win_status is called with a player and an updated state
     # the current state is really the updated state from the
@@ -238,17 +284,30 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
         raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
 
     if status=='win':  # bad for min
+        if verbose:
+            print(tabs,"end state value: 1 - %d/1000 = %f" % (depth,1-depth/1000.0))
+
         return 1-depth/1000.0
     elif status=='lose':  # good for min
+        if verbose:
+            print(tabs,"end state value: -1 + %d/1000 = %f" % (depth,-1+depth/1000.0))
         return -1+depth/1000.0
     elif status=='stalemate':  # draw
+        if verbose:
+            print(tabs,"end state value: 0 + %d/1000 = %f" % (depth,0+depth/1000.0))
         return 0+depth/1000.0
 
     moves=valid_moves(current_state,player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
     repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
+    if verbose:
+        print(tabs,"Getting MAX value for states")
+        for s in available_states:
+            print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
+
+
     value=inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
@@ -267,7 +326,7 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
     else:
         return value
     
-def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
+def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
         other_player=2
@@ -276,6 +335,12 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
 
     if depth>maxdepth:
         return minimax_heuristic(current_state,player)-depth/1000.0
+
+    if verbose:
+        tabs='\t'*depth
+        print(tabs,"MAX value current state\n")
+        s=current_state
+        print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
     # since win_status is called with a player and an updated state
     # the current state is really the updated state from the
@@ -286,10 +351,18 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
         raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % status)
 
     if status=='win':  # bad for max
+        if verbose:
+            print(tabs,"end state value: -1 + %d/1000 = %f" % (depth,-1+depth/1000.0))
+
         return -1+depth/1000.0
     elif status=='lose':  # good for max
+        if verbose:
+            print(tabs,"end state value: 1 - %d/1000 = %f" % (depth,1-depth/1000.0))
         return 1-depth/1000.0
     elif status=='stalemate':  # draw
+        if verbose:
+            print(tabs,"end state value: 0 - %d/1000 = %f" % (depth,0-depth/1000.0))
+
         return 0-depth/1000.0
 
     moves=valid_moves(current_state,player)
@@ -297,6 +370,12 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf):
                                 for move in moves]
     repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
+    if verbose:
+        print(tabs,"Getting MIN value for states")
+        for s in available_states:
+            print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
+
+
     value=-inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
@@ -430,7 +509,7 @@ def repeat_move_default(*args,**kwargs):
     return False
 
 def minimax_values(current_state,player,maxdepth=inf,
-                adjust_values_by_depth=False,display=True):
+                adjust_values_by_depth=False,display=True,verbose=False):
 
     global valid_moves,win_status,update_state,repeat_move
     
@@ -471,6 +550,16 @@ def minimax_values(current_state,player,maxdepth=inf,
     moves=valid_moves(current_state,player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
+
+    if verbose:
+        print("minimax_values verbose current state\n")
+        print(current_state)
+        print("Getting MIN value for states")
+        for s in available_states:
+            print(s)
+
+
+
     repeats=[repeat_move(deepcopy(current_state),player,move) 
                 for move in moves]
     
@@ -479,14 +568,14 @@ def minimax_values(current_state,player,maxdepth=inf,
             if repeat:
                 value=maxvalue_ab_depth(state,player,maxdepth=maxdepth)
             else:
-                value=minvalue_ab_depth(state,other_player,maxdepth=maxdepth)
+                value=minvalue_ab_depth(state,other_player,maxdepth=maxdepth,verbose=verbose)
             values.append(value)
     else:        
         for state,repeat in zip(available_states,repeats):
             if repeat:
                 value=maxvalue_ab(state,player,maxdepth=maxdepth)
             else:
-                value=minvalue_ab(state,other_player,maxdepth=maxdepth)
+                value=minvalue_ab(state,other_player,maxdepth=maxdepth,verbose=verbose)
             values.append(value)
 
     # sort by value
