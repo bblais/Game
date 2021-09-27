@@ -134,7 +134,7 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
 
     if verbose:
         tabs='\t'*depth
-        print(tabs,"MIN value current state\n")
+        print(tabs,"MIN value current state %d\n" % depth)
         s=current_state
         print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
@@ -176,9 +176,9 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
     value=inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
-            payoff=minvalue_ab(state,player,depth+1,a,b,maxdepth)
+            payoff=minvalue_ab(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
-            payoff=maxvalue_ab(state,other_player,depth+1,a,b,maxdepth)
+            payoff=maxvalue_ab(state,other_player,depth+1,a,b,maxdepth,verbose=verbose)
 
         if payoff<value:
             value=payoff
@@ -203,7 +203,7 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
 
     if verbose:
         tabs='\t'*depth
-        print(tabs,"MAX value current state\n")
+        print(tabs,"MAX value current state %d\n" % depth)
         s=current_state
         print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
@@ -243,9 +243,9 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
     value=-inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
-            payoff=maxvalue_ab(state,player,depth+1,a,b,maxdepth)
+            payoff=maxvalue_ab(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
-            payoff=minvalue_ab(state,other_player,depth+1,a,b,maxdepth)
+            payoff=minvalue_ab(state,other_player,depth+1,a,b,maxdepth,verbose=verbose)
 
         if payoff>value:
             value=payoff
@@ -311,9 +311,9 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,ver
     value=inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
-            payoff=minvalue_ab_depth(state,player,depth+1,a,b,maxdepth)
+            payoff=minvalue_ab_depth(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
-            payoff=maxvalue_ab_depth(state,other_player,depth+1,a,b,maxdepth)
+            payoff=maxvalue_ab_depth(state,other_player,depth+1,a,b,maxdepth,verbose=verbose)
 
         if payoff<value:
             value=payoff
@@ -379,9 +379,9 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,ver
     value=-inf
     for state,repeat in zip(available_states,repeats):
         if repeat:
-            payoff=maxvalue_ab_depth(state,player,depth+1,a,b,maxdepth)
+            payoff=maxvalue_ab_depth(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
-            payoff=minvalue_ab_depth(state,other_player,depth+1,a,b,maxdepth)
+            payoff=minvalue_ab_depth(state,other_player,depth+1,a,b,maxdepth,verbose=verbose)
 
         if payoff>value:
             value=payoff
