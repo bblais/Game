@@ -306,7 +306,7 @@ class Game(object):
 
                     moves=self.valid_moves(observation,player)
                     if moves==[]:
-                        raise ValueError("State %s has no moves for player %d" % (str(state),player))
+                        raise ValueError("State %s has no moves for player %d" % (str(self.state),player))
 
                     if agents[player].move_args==3:
                         move=agents[player].move(observation,player,agents[player])
