@@ -357,6 +357,9 @@ class Game(object):
                 if not status in ['win','lose','stalemate','tie',None]:
                     raise ValueError("Win status returned '%s' not valid.  Allowed values only in ['win','lose','stalemate',None]." % str(status))
 
+
+
+
                 if status:
                     break
                 elif not self.check_repeated_states:
@@ -371,9 +374,10 @@ class Game(object):
                 
                 player,other_player=other_player,player
 
-
             if self.display:
+                observation=self.state_to_observation(self.state,player)
                 self.show_state(observation)
+
                 
             stati=[None,None,None]
             if status=='win':
