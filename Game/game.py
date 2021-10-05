@@ -149,6 +149,18 @@ def default_repeat_move(*args,**kwargs):
 def default_state_to_observation(state,player):
     return state
 
+def tuple2list(T):
+
+    L=[]
+    for t in T:
+        if isinstance(t,tuple):
+            t=tuple2list(t)
+        L.append(t)
+
+    return L
+
+
+
 class Game(object):
     
     def __init__(self,number_of_games=1,**kwargs):
@@ -217,7 +229,8 @@ class Game(object):
         observation=self.state_to_observation(self.state,player)
         moves=self.valid_moves(observation,player)
         try:
-            list_move=list(move)  # deal with tuples
+            list_move=tuple2list(move)
+            #list_move=list(move)  # deal with tuples
             return move in moves or list_move in moves
         except TypeError:
             return move in moves
@@ -645,7 +658,7 @@ def random_choice(choices):
         weights=[]
         for key in list(Q.keys()):
             if isinstance(key,tuple):
-                choices.append(list(key))
+                choices.append(tuple2list(key))
             else:
                 choices.append(key)                
             weights.append(Q[key])
@@ -670,7 +683,7 @@ def top_choice(choices,weights=None):
         weights=[]
         for key in list(Q.keys()):
             if isinstance(key,tuple):
-                choices.append(list(key))
+                choices.append(tuple2list(key))
             else:
                 choices.append(key)                
             weights.append(Q[key])
@@ -706,7 +719,7 @@ def weighted_choice(choices,weights=None):
         weights=[]
         for key in list(Q.keys()):
             if isinstance(key,tuple):
-                choices.append(list(key))
+                choices.append(tuple2list(key))
             else:
                 choices.append(key)                
             weights.append(Q[key])

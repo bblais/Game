@@ -169,7 +169,6 @@ class Table(dict):
             self[key]=obj[key]
         
 
-
 def SaveTable(obj, filename='_memory_.json'):
     """Saves an object to disk
     
@@ -181,7 +180,7 @@ def SaveTable(obj, filename='_memory_.json'):
             f.writestr(filename[:-4],json.dumps(tuple2str(obj),sort_keys=True, indent=4))
     else:
         with open(filename, 'w') as f:
-            json.dump(tuple2str(obj),f, sort_keys=True, indent=4)
+            json.dump(tuple2str(obj),f, sort_keys=True, indent=4,)
 
 def LoadTable(filename='_memory_.json',handle_exist=True):
     """Loads an object from disk
