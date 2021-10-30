@@ -2,6 +2,7 @@ inf=1e500
 import inspect
 import time
 from copy import deepcopy
+from functools import lru_cache
 
 def bad_heuristic(current_state,player):
     return 0
@@ -122,6 +123,7 @@ def maxvalue(current_state,player,depth=0,maxdepth=inf):
     else:
         return max(values)
     
+@lru_cache(maxsize=None)
 def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
@@ -191,6 +193,7 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
     else:
         return value
     
+@lru_cache(maxsize=None)
 def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
@@ -259,6 +262,7 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
     else:
         return value
     
+@lru_cache(maxsize=None)
 def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
@@ -326,6 +330,7 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,ver
     else:
         return value
     
+@lru_cache(maxsize=None)
 def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=False):
     
     if player==1:
