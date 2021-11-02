@@ -9,6 +9,14 @@ try:
 except ImportError:
     int64 = int
 
+class List(list):
+
+    def immutable(self):
+        return tuple(self)
+
+    def __hash__(self):
+        return hash(tuple(self))
+
 
 class Board(object):
 

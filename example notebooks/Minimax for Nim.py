@@ -99,16 +99,16 @@ def initial_state():
 values,moves=minimax_values(27,1)  # was about 2 seconds
 
 
-# In[7]:
+# In[9]:
 
 
-values,moves=minimax_values(29,1)
+values,moves=minimax_values(31,1)
 
 
-# In[ ]:
+# In[10]:
 
 
-
+values,moves
 
 
 # when the game is long (say the initial state is large), minimax takes a long time

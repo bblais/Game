@@ -4,6 +4,8 @@ import time
 from copy import deepcopy
 from functools import lru_cache
 
+from .board import List
+
 def bad_heuristic(current_state,player):
     return 0
     
@@ -551,7 +553,7 @@ def minimax_values(current_state,player,maxdepth=inf,
 
     values=[]
     states=[]
-    
+
     moves=valid_moves(current_state,player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
@@ -570,6 +572,9 @@ def minimax_values(current_state,player,maxdepth=inf,
     
     if adjust_values_by_depth:
         for state,repeat in zip(available_states,repeats):
+            if isinstance(state,list):
+                state=List(state)
+
             if repeat:
                 value=maxvalue_ab_depth(state,player,maxdepth=maxdepth)
             else:
@@ -577,6 +582,8 @@ def minimax_values(current_state,player,maxdepth=inf,
             values.append(value)
     else:        
         for state,repeat in zip(available_states,repeats):
+            if isinstance(state,list):
+                state=List(state)
             if repeat:
                 value=maxvalue_ab(state,player,maxdepth=maxdepth)
             else:
