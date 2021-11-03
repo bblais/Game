@@ -4,7 +4,13 @@ import time
 from copy import deepcopy
 from functools import lru_cache
 
-from .board import List
+class List(list):
+
+    def immutable(self):
+        return tuple(self)
+
+    def __hash__(self):
+        return hash(tuple(self))
 
 def bad_heuristic(current_state,player):
     return 0
