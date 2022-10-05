@@ -21,3 +21,8 @@ example notebooks/mcts_dodgem_data\.json
 example notebooks/f_hmcts_data\.json
 
 example notebooks/Fox and Hounds\.ipynb
+
+dist/
+
+Game.egg-info/
+.gitignore

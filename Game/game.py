@@ -10,23 +10,23 @@ import os
 
 from random import randint
 
-
 class Storage(object):
-    def __init__(self):
+    def __init__(self,save_every=1):
+        self.save_every=save_every
+        self.count=0
         self.data=[]
-    
+
     def __add__(self,other):
         s=Storage()
         s+=other
         return s
-        
+
     def __iadd__(self,other):
-        try:
+        if self.count % self.save_every ==0:
             self.append(*other)
-        except TypeError: # non-iterable
-            self.append(other)
+        self.count+=1
         return self
-        
+
     def append(self,*args):
         if not self.data:
             for arg in args:
@@ -35,13 +35,9 @@ class Storage(object):
         else:
             for d,a in zip(self.data,args):
                 d.append(a)
-       
-    def arrays(self):
-        from numpy import array
-        for i in range(len(self.data)):
-            self.data[i]=array(self.data[i])
 
-        ret=tuple(self.data)
+    def arrays(self):
+        ret=tuple([array(_) for _ in self.data])
         if len(ret)==1:
             return ret[0]
         else:
@@ -50,6 +46,7 @@ class Storage(object):
     def __array__(self):
         from numpy import vstack
         return vstack(self.arrays())
+
 
 
 def sortedby(L,values,reverse=False):
