@@ -37,6 +37,7 @@ class Storage(object):
                 d.append(a)
 
     def arrays(self):
+        from numpy import array
         ret=tuple([array(_) for _ in self.data])
         if len(ret)==1:
             return ret[0]
