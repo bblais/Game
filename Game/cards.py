@@ -165,6 +165,9 @@ class CardList(list):
                 
         return result
 
+    def __str__(self):
+        return ' '.join([str(card) for card in self])        
+
     def deal(self,N=1):
         hand=CardList()
         for i in range(N):
