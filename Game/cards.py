@@ -47,27 +47,7 @@ class Card(object):
         else:
             self.__setitem__(item, value)
 
-    def __repr__(self):
-        # if self.rank==1:
-        #     rankstr='Ace'
-        # elif self.rank==11:
-        #     rankstr='Jack'
-        # elif self.rank==12:
-        #     rankstr='Queen'
-        # elif self.rank==13:
-        #     rankstr='King'
-        # elif self.rank is None:
-        #     rankstr='Nothing'
-        # else:
-        #     rankstr='%d' % self.rank
-            
-        # if self.suit=='Joker':
-        #     s='Joker'
-        # elif self.suit is None:
-        #     s=rankstr
-        # else:
-        #     s='%s of %s' % (rankstr,self.suit)
-        
+    def __str__(self):
         if self.rank==1:
             rankstr='A'
         elif self.rank==11:
@@ -87,8 +67,11 @@ class Card(object):
             s=rankstr
         else:
             s='%s%s' % (rankstr,self.suit)
-        
-        return "'%s'" % s
+
+        return s
+
+    def __repr__(self):       
+        return "'%s'" % str(self)
         
     def match(self,other):
         if self==other:
