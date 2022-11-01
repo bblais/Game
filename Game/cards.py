@@ -122,7 +122,10 @@ class Card(object):
         return self.rank<=other.rank
     
     def __eq__(self,other):
-        return self.rank==other.rank and self.suit==other.suit
+        try:
+            return self.rank==other.rank and self.suit==other.suit
+        except AttributeError:  # not a card!
+            return False
         
 def translate(cardval):
     if isinstance(cardval,Card):
