@@ -9,16 +9,72 @@ try:
 except ImportError:
     int64 = int
 
+"""
+List is a subclass of the built-in list class in Python. It allows for conversion to an immutable tuple and hashing.
+
+Example:
+lst = List([1, 2, 3])
+# Convert to immutable tuple
+tpl = lst.immutable() # returns (1, 2, 3)
+# Hash the list
+hsh = hash(lst) # returns a unique hash value for the list
+
+"""
+
 class List(list):
 
     def immutable(self):
+        """
+        Returns an immutable tuple copy of the list.
+
+        Returns:
+            tuple: An immutable tuple copy of the list.
+        """
         return tuple(self)
 
     def __hash__(self):
+        """
+        Returns a hash value for the list.
+
+        Returns:
+            int: A unique hash value for the list.
+        """
         return hash(tuple(self))
 
-
 class Board(object):
+    """
+    A class for representing a board with various dimensions and pieces.
+
+    Args:
+        *args: The dimensions of the board.
+
+    Attributes:
+        shape (tuple): The shape of the board.
+        dimension (int): The number of dimensions of the board.
+        board (list): A list containing the values at each position on the board.
+        pieces (None): Placeholder for future implementation to add different types of pieces to the board.
+        team (dict): A dictionary mapping player numbers to team numbers.
+
+    Methods:
+        __eq__(other): Compares two boards to see if they are equal.
+        __int__(): Converts a board to an integer value, useful for hashing.
+        immutable(): Returns an immutable tuple representation of the current state of the board.
+        __len__(): Returns the number of positions on the board.
+        find(player): Returns a list containing all positions on the board where a certain player's piece is located.
+        index_from_rc(rc,c=None): Converts row-column coordinates or strings ("A1") or integers to an index in the one-dimensional array representing the board. Raises IndexError if row or column is out of bounds, or if index is out of bounds for one-dimensional boards. Raises ValueError if more than three dimensions are present in shape.
+        rc_from_index(index): Converts an index in a one-dimensional array representing the board to row-column coordinates or tuples. Raises ValueError if more than three dimensions are present in shape.
+        __getitem__(key): Gets the value at a specific position on the board using row-column coordinates or strings ("A1") or integers as input.
+        __setitem__(key,val): Sets a specific position on the board using row-column coordinates or strings ("A1") or integers as input and assigning val as its value.
+        row_positions(length=None): Yields all possible positions for rows with length specified by the length parameter. 
+
+        Example:
+        board = Board(3,3)
+        board[0] = 1
+        board[4] = 2
+        assert board.find(1) == [0]
+        assert board.find(2) == [4]
+
+    """
 
     def __init__(self,*args):
         self.shape=args
@@ -57,20 +113,29 @@ class Board(object):
         return locations
         
     def index_from_rc(self,rc,c=None):
+    	# Convert row-column coordinates to list format if c argument is provided.
+
+        
         if not c is None:
             rc=[rc,c]
 
+    	# Convert strings representing row-column coordinates to integer format.
         if isinstance(rc,str):
             rc=[int(rc[1:])-1,ord(rc[0])-97]
 
+    	# Convert integers to index if only one argument is provided.
         if isinstance(rc,(int,int64)):
             index=rc
             if rc>=len(self.board) or rc<0:
                 raise IndexError("Illegal index")
+
+    	# Convert coordinates to index for one-dimensional boards.
         elif len(self.shape)==1:
             index=rc[0]
             if index>=length(self.board) or rc<0:
                 raise IndexError("Illegal index")
+
+    	# Convert coordinates to index for two-dimensional boards.
         elif len(self.shape)==2:
             r,c=rc
             
@@ -80,6 +145,8 @@ class Board(object):
                 raise IndexError("Illegal col")
                 
             index=r*self.shape[1]+c
+
+    	# Convert coordinates to index for three-dimensional boards.
         elif len(self.shape)==3:
             r,c,h=rc
             if r>=self.shape[0] or r<0:
@@ -97,6 +164,23 @@ class Board(object):
         return index
         
     def rc_from_index(self,index):
+        """
+        Converts a linear index to a row-column pair for a 2D or 3D board.
+        If the input is a list of indices, returns a list of row-column pairs.
+
+        Parameters:
+        index (int or list): The linear index or list of linear indices to be converted.
+
+        Returns:
+        tuple or list of tuples: A tuple representing the row and column for a 2D board,
+                                or a tuple representing the height, row, and column for a 3D board,
+                                or a list of such tuples if the input is a list.
+                                
+        Raises:
+        ValueError: If the shape of the board is not 1D, 2D, or 3D.
+                    If the input index is out of range for a 1D board.
+        """
+
         if isinstance(index,list):
             rc=[self.rc_from_index(i) for i in index]
             return rc
@@ -130,6 +214,31 @@ class Board(object):
         self.board[index]=val
             
     def row_positions(self,length=None):
+        """
+        Generates all possible positions for rows of length `length` in this board.
+
+        Parameters:
+        length (int): The number of positions in each row to generate.
+                    If None, generates all possible rows of maximum length given this board's shape.
+                    
+        Yields:
+        list: A list of tuples representing positions in one row of this board. 
+            Each tuple represents a position as an index.
+            
+            For example, if this is a 2D board with shape (3,4) and length=2, the generator
+            will yield the following rows:
+            
+            [0, 1]
+            [1, 2]
+            [2, 3]
+            [4, 5]
+            [5, 6]
+            [6, 7]
+            [8, 9]
+            [9, 10]
+            [10, 11]            
+
+        """
         
         tempboard=Board(*self.shape)
         tempboard.board=list(range(prod(self.shape)))
@@ -373,7 +482,31 @@ class Board(object):
         return all_moves
 
     def col_positions(self,length=None):
-        
+        """
+        Generates all possible positions for columns of length `length` in this board.
+
+        Parameters:
+        length (int): The number of positions in each col to generate.
+                    If None, generates all possible cols of maximum length given this board's shape.
+                    
+        Yields:
+        list: A list of tuples representing positions in one col of this board. 
+            Each tuple represents a position as an index.
+            
+            For example, if this is a 2D board with shape (3,4) and length=2, the generator
+            will yield the following cols:
+            
+            [0, 4]
+            [1, 5]
+            [2, 6]
+            [3, 7]
+            [4, 8]
+            [5, 9]
+            [6, 10]
+            [7, 11]
+
+        """
+         
         tempboard=Board(*self.shape)
         tempboard.board=list(range(prod(self.shape)))
         
@@ -381,7 +514,34 @@ class Board(object):
             yield col
         
     def diag_positions(self,length=None):
-        
+        """
+        Generates all possible positions for diagonals of length `length` in this board.
+
+        Parameters:
+        length (int): The number of positions in each diagonal to generate.
+                    If None, generates all possible diagonals of maximum length given this board's shape.
+                    
+        Yields:
+        list: A list of tuples representing positions in one diagonals of this board. 
+            Each tuple represents a position as an index.
+            
+            For example, if this is a 2D board with shape (3,4) and length=2, the generator
+            will yield the following diagonals:
+            
+            [0, 5]
+            [1, 6]
+            [1, 4]
+            [2, 7]
+            [2, 5]
+            [3, 6]
+            [4, 9]
+            [5, 10]
+            [5, 8]
+            [6, 11]
+            [6, 9]
+            [7, 10]
+        """
+                 
         tempboard=Board(*self.shape)
         tempboard.board=list(range(prod(self.shape)))
         
@@ -614,6 +774,24 @@ class Board(object):
             raise ValueError("Not implemented for dims 4+")
 
     def show_locations(self,notation='index'):
+        """
+        The show_locations method displays the locations of each cell on the board. 
+        The notation parameter determines how the locations are displayed. 
+        If notation is set to 'index', the locations are displayed using index notation 
+        (i.e., the numbers 0 through n-1, where n is the number of cells on the board).
+        If notation starts with 'alg' (short for algebraic notation), then the locations 
+        are displayed using chess-like algebraic notation. The algebraic notation used 
+        for a 1D board is simply "a1", "b1", "c1", etc., while for a 2D board 
+        it's "a1", "b1", "c1" up to "a2", "b2", etc. If any other value is passed 
+        as notation, a ValueError is raised.
+
+        For example, if this is a 2D board with shape (3,4), the following will be dislayed:
+
+            0  1  2  3
+            4  5  6  7
+            8  9 10 11        
+        """
+
         loc=Board(*self.shape)
         loc.board=list(range(prod(self.shape)))
 
