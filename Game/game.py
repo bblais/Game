@@ -289,8 +289,9 @@ class Game(object):
                 agent.last_action=None
                 agent.last_state=None
                 agent.last_player=None
-                arginfo=inspect.getargspec(agent.move)
-                agent.move_args=len(arginfo.args)
+
+                arginfo=inspect.signature(agent.move)
+                agent.move_args=len(arginfo.parameters)
             
             move_count=1
             
@@ -524,8 +525,8 @@ class CardGame(object):
                 agent.last_action=None
                 agent.last_state=None
                 agent.last_player=None
-                arginfo=inspect.getargspec(agent.move)
-                agent.move_args=len(arginfo.args)
+                arginfo=inspect.signature(agent.move)
+                agent.move_args=len(arginfo.parameters)
             
             move_count=1
             while True:
