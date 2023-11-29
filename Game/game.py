@@ -3,6 +3,7 @@ import random
 from copy import deepcopy
 from copy import deepcopy as copy
 import sys
+from collections import UserDict
 
 #from .Memory import Remember as Remember2
 #from .Memory import Remember
@@ -651,7 +652,7 @@ def epsilon_greedy_choice(choices,weights=None,epsilon=0.1):
         
 def random_choice(choices):
     
-    if isinstance(choices,dict):  # given a dictionary
+    if isinstance(choices,(dict,UserDict)):  # given a dictionary
         Q=choices
         choices=[]
         weights=[]
@@ -676,7 +677,7 @@ def all_same(L):
 
 def top_choice(choices,weights=None):
     
-    if isinstance(choices,dict):  # given a dictionary
+    if isinstance(choices,(dict,UserDict)):  # given a dictionary
         Q=choices
         choices=[]
         weights=[]
@@ -712,7 +713,7 @@ def top_choice(choices,weights=None):
 def weighted_choice(choices,weights=None):
     import random
 
-    if isinstance(choices,dict):  # given a dictionary
+    if isinstance(choices,(dict,UserDict)):  # given a dictionary
         Q=choices
         choices=[]
         weights=[]
@@ -755,7 +756,7 @@ def weighted_choice(choices,weights=None):
         raise ValueError("Wrong random number: "+str(r)+" for "+str(norm_weights))
 
     
-    if isinstance(choices,dict):  # given a dictionary
+    if isinstance(choices,(dict,UserDict)):  # given a dictionary
         return choices[i]  
     elif choices is None:
         return i  

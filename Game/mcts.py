@@ -48,7 +48,7 @@ def mcts_values(current_state,player,T,seconds=30,max_moves=100):
     
     games=0
     while datetime.datetime.utcnow()-begin< calculation_time:
-        mcts_run_simulation(current_state,player,max_moves,T)
+        mcts_run_simulation(current_state,player,max_moves=max_moves,T=T)
         games+=1
         
     
@@ -109,13 +109,17 @@ def top_choice(choices,weights=None):
     i=argmax(weights)
     return choices[i]
 
-def mcts_run_simulation(state,player,max_moves,T):
+def mcts_run_simulation(state,player,T,max_moves=100,save_states=False):
+    global valid_moves,win_status,update_state,repeat_move
+
     import random
     from Game.tables import make_immutable
 
     visited_state_player=[]
     original_player=player
     
+    saved_states_moves=[]
+
     C=1.4  # what is this?
     
     if player==1:
@@ -157,12 +161,14 @@ def mcts_run_simulation(state,player,max_moves,T):
         else:
             move=random.choice(moves)
         
-        
+        if save_states and player==original_player:
+            saved_states_moves.append((deepcopy(state),move))
         
         state=update_state(state,player,move)
+
         status=win_status(state,player)
         
-        # note - this is the state *after* the move by player
+        # note - this is the state *after* the move by player - why?
         visited_state_player.append((state,player))
         if first_time and not (state,player) in T:  # not sure why only the first time this call
             T[(state,player)]={'plays':1,'wins':0}
@@ -170,7 +176,11 @@ def mcts_run_simulation(state,player,max_moves,T):
         
         if not status is None:  # end game
             break
-            
+
+        repeat=repeat_move(state,player,move)
+        if repeat:
+            continue
+
         player,other_player=other_player,player
         
     if status=='win':
@@ -188,4 +198,16 @@ def mcts_run_simulation(state,player,max_moves,T):
         if player==winner:
             T[(state,player)]['wins']+=1
             
+    if save_states:
+        
+        states,moves=zip(*saved_states_moves)
+        if original_player==winner:
+            reward=1
+        elif winner is None:
+            reward=0.5
+        else:
+            reward=-1
+
+        return states,moves,reward
+
         

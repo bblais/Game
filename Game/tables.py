@@ -1,11 +1,13 @@
+from collections import UserDict
 import os
 import zipfile
 import json
+from collections import UserDict
 
 def tuple2str(var):
     from copy import deepcopy
     
-    if not isinstance(var,dict):
+    if not isinstance(var,(dict,UserDict)):
         return var
     
     newvar={}
@@ -67,6 +69,63 @@ def make_immutable(var):
     else:
         return var
         
+from .board import Board
+def state2key(state):
+    if isinstance(state,Board):
+        return tuple(state)
+    elif isinstance(state,int):
+        return state
+
+    # can be a tuple or list
+
+    return tuple(state2key(_) for _ in state)
+
+
+class Table2(UserDict):
+
+
+    def max(self):
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        return max(s)
+
+    def argmax(self):
+        
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        argmax=max(zip(s, range(len(s))))[1]
+        return argmax
+
+    def min(self):
+        s=[]
+        for key in self.keys():
+            s.append(self[key])
+
+        return min(s)
+
+    def save(self,filename):
+        SaveTable(self,filename)
+        
+    def __getitem__(self, key):
+        key=state2key(key)
+        return self.data[key]
+
+    def __setitem__(self, key, value):
+        key=state2key(key)
+        self.data[key]=value
+
+    def __contains__(self, key):
+        key=state2key(key)
+        return key in self.data
+
+
+
+
+
 class Table(dict):
 
     def __init__(self, other=None,**kwargs):
