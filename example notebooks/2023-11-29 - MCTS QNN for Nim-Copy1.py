@@ -1,134 +1,52 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
 from Game import *
+
+
+# In[2]:
 
 
 from tqdm import tqdm
 
 
+# In[3]:
+
+
 def initial_state():
-    return Board(3,3)
+    return 9
 
-
-def valid_moves(board,player):
-
-    empty=[]
-    for i in range(9):
-        if board[i]==0:
-            empty.append(i)
-
-    return empty
-
-
-def check_three_in_a_row(row):
-
-    if row[0]==1 and row[1]==1 and row[2]==1:
-        return 1
-    elif row[0]==2 and row[1]==2 and row[2]==2:
-        return 2
+def valid_moves(state,player):
+    if state==1:
+        return [1]
+    elif state==2:
+        return [1,2]
     else:
-        return 0
+        return [1,2,3]
+        
+def show_state(state):
+    print ("There are ",state," sticks left.")
 
+def update_state(state,player,move):
+    new_state=state-move
+    return new_state
 
-def win_status(board,player):
-    # in ttt, after a move, that player can either win or stalemate
-    # they can't lose after their own move
+def win_status(state,player):
+
+    if state==1:
+        return 'win'
     
-    if check_three_in_a_row( [board[0],board[1],board[2] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[2],board[5],board[8] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[3],board[4],board[5] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[6],board[7],board[8] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[0],board[3],board[6] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[1],board[4],board[7] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[0],board[4],board[8] ])==player:
-        return 'win'
-
-    if check_three_in_a_row( [board[6],board[4],board[2] ])==player:
-        return 'win'
-
-
-    # stalemate
-    tie=True
-    for i in range(9):
-        if board[i]==0:
-            tie=False
-
-    if tie:
-        return 'stalemate'
-
-
-
-    return None
-
-
-
-def update_state(board,player,move):
-    board[move]=player
-    return board
-
-
-
-def print_row(row):
-
-    line=''
-    if row[0]==0:
-        line=line+'   '
-    elif row[0]==1:
-        line=line+' X '
-    else:
-        line=line+' O '
-
-    line=line+'|'
-
-    if row[1]==0:
-        line=line+'   '
-    elif row[1]==1:
-        line=line+' X '
-    else:
-        line=line+' O '
-
-    line=line+'|'
-
-    if row[2]==0:
-        line=line+'   '
-    elif row[2]==1:
-        line=line+' X '
-    else:
-        line=line+' O '
-
-    line=line+'|'
-    print(line)
-
-
-
-def show_state(board):
-
-    print_row( [ board[0],board[1],board[2] ])
-    print("---+---+---")
-    print_row( [ board[3],board[4],board[5] ])
-    print("---+---+---")
-    print_row( [ board[6],board[7],board[8]])
+    elif state==0:
+        return 'lose'
     
-    print()
-    print("Choices:")
-    print("""
-     0 | 1 | 2
-    ---+---+---
-     3 | 4 | 5
-    ---+---+---
-     6 | 7 | 8
-    """)
+    else:
+        return None
 
+
+# In[4]:
 
 
 def random_move(state,player):
@@ -151,11 +69,14 @@ def human_move(state,player):
  
 
 
+# In[5]:
 
 
 random_agent=Agent(random_move)
 human_agent=Agent(human_move)
 
+
+# In[6]:
 
 
 from Game.mcts import *
@@ -169,7 +90,9 @@ mcts_agent.T=Table()
 mcts_agent.seconds=1
 
 
+# **looks like one mcts game needs to be run for the mcts_run_simulation to have copies of the games functions -- this is a bug**
 
+# In[7]:
 
 
 g=Game(number_of_games=1)
@@ -178,69 +101,60 @@ wins=g.run(mcts_agent,random_agent)
 g.report()
 
 
+# In[8]:
+
+
 state=initial_state()
 T=Table()
 mcts_run_simulation(state,player=1,T=T,save_states=True)
+
+
+# In[9]:
 
 
 import numpy as np
 from nn import NumpyNetTable
 
 
+# In[10]:
+
+
 def all_possible_moves():
-    all_moves=[]
-    for move in range(9):
-        all_moves.append(move)
+    all_moves=[1,2,3]
             
     return all_moves
 
-
-
 # length 9 with +1, -1, 0
-def state_to_X(state):  
+def state_to_X(state):
+    max_state=9
     import numpy as np
-    N2=len(state)
-    arr=np.zeros((1,N2))  # number of samples, size
-    for i in range(N2):
-        if state[i]==0:
-            arr[0,i]=0
-        elif state[i]==1:
-            arr[0,i]=1
-        elif state[i]==2:
-            arr[0,i]=-1
-                     
-    return arr
-
-# length 18 with player 1 +1  and player 2 +1
-def state_to_X(state):  
-    import numpy as np
-    N2=2*len(state)
-    arr=np.zeros((1,N2))  # number of samples, size
-    for i in range(len(state)):
-        if state[i]==0:
-            arr[0,i]=0
-            arr[0,2*i]=0
-        elif state[i]==1:
-            arr[0,i]=1
-        elif state[i]==2:
-            arr[0,2*i]=1
+    arr=np.zeros((1,max_state))  # number of samples, size
+    arr[0,state-1]=1
                      
     return arr
 
 
 
-state=initial_state()
-state[0]=1
-state[3]=2
-state[4]=1
-state[8]=2
+# In[11]:
+
+
+state=8
 state
+
+
+# In[12]:
 
 
 state_to_X(state)
 
 
+# In[13]:
+
+
 from datetime import datetime
+
+
+# In[14]:
 
 
 def QNN_move(state,player,info):
@@ -284,8 +198,13 @@ def QNN_move(state,player,info):
     calculation_time=1 # maximum seconds of mcts
     games=0
     begin=datetime.utcnow()
+    all_states=[]
     while ( (datetime.utcnow()-begin).total_seconds()< calculation_time) and (games<number_of_games_mcts):
         states,moves,game_reward=mcts_run_simulation(state,player,max_moves=30,T=T,save_states=True)
+        all_states.append((states,moves,game_reward))
+        games+=1
+
+    for states,moves,game_reward in all_states:
 
         possible_moves=Q.all_moves
         for k in range(len(states)-1):
@@ -331,14 +250,13 @@ def QNN_move(state,player,info):
                 target.append(-1)  # lose with illegal move
 
         Q[state2]=target            
-        
-        
-        games+=1
     
         
     return action
 
 
+
+# In[27]:
 
 
 QNN1_agent=Agent(QNN_move)
@@ -347,7 +265,7 @@ QNN1_agent.alpha=0.05  # learning rate
 QNN1_agent.gamma=0.95  # memory
 QNN1_agent.epsilon=0.1  # chance of making a random move
 QNN1_agent.T=Table()  # this is for MCTS
-QNN1_agent.number_of_games_mcts=20
+QNN1_agent.number_of_games_mcts=25
 QNN1_agent.learning=True
 
 
@@ -357,9 +275,11 @@ QNN2_agent.alpha=0.05  # learning rate
 QNN2_agent.gamma=0.95  # memory
 QNN2_agent.epsilon=0.1  # chance of making a random move
 QNN2_agent.T=Table()  # this is for MCTS
-QNN2_agent.number_of_games_mcts=20
+QNN2_agent.number_of_games_mcts=25
 QNN2_agent.learning=True
 
+
+# In[28]:
 
 
 state=initial_state()
@@ -372,8 +292,7 @@ print(initial_X)
 QNN1_agent.Q=NumpyNetTable(state_to_X,all_possible_moves(),
                 {
                     'input':initial_X.shape[1],               # number of inputs
-                    'hidden':[(81,'relu'),],
-                    'hidden':[(81,'relu'),],
+                    'hidden':[(10,'relu'),],
                     'output':(len(all_moves),'linear'),  # number of moves
                     'cost':'mse',
                 },
@@ -382,8 +301,7 @@ QNN1_agent.Q=NumpyNetTable(state_to_X,all_possible_moves(),
 QNN2_agent.Q=NumpyNetTable(state_to_X,all_possible_moves(),
                 {
                     'input':initial_X.shape[1],               # number of inputs
-                    'hidden':[(81,'relu'),],
-                    'hidden':[(81,'relu'),],
+                    'hidden':[(10,'relu'),],
                     'output':(len(all_moves),'linear'),  # number of moves
                     'cost':'mse',
                 },
@@ -394,13 +312,19 @@ QNN1_agent.Q[state]=[0]*len(all_possible_moves())
 QNN2_agent.Q[state]=[0]*len(all_possible_moves())
 
 
+# In[29]:
 
+
+from Game.minimax import *
 def minimax_move(state,player):
     values,moves=minimax_values(state,player,display=False)
     return top_choice(moves,values)
 
 
 minimax_agent=Agent(minimax_move)
+
+
+# In[30]:
 
 
 agent1=QNN1_agent
@@ -410,6 +334,9 @@ N_test=100
 N_train=5
 
 
+# In[31]:
+
+
 S1=Storage()
 S2=Storage()
 
@@ -417,7 +344,10 @@ one1,two1,ties1,illegal1,N1,total_train1=0,0,0,0,0,0
 one2,two2,ties2,illegal2,N2,total_train2=0,0,0,0,0,0
 
 
-for i in tqdm(range(500)):
+# In[32]:
+
+
+for i in tqdm(range(100)):
     agent1.learning=True
     agent2.learning=True
     g=Game(number_of_games=N_train)
@@ -455,9 +385,14 @@ for i in tqdm(range(500)):
 
 
 
+# In[21]:
 
-%matplotlib inline
+
+get_ipython().run_line_magic('matplotlib', 'inline')
 from matplotlib.pyplot import figure,plot,grid,legend,xlabel,ylabel,title
+
+
+# In[22]:
 
 
 y1,y2,y0,y3,x,t=S1.arrays()
@@ -473,6 +408,9 @@ xlabel('Number of Games')
 ylabel('Percent')
 
 
+# In[23]:
+
+
 y1,y2,y0,y3,x,t=S2.arrays()
 figure(figsize=(16,8))
 plot(t,y1,'-o',label='One Win')
@@ -486,6 +424,9 @@ xlabel('Number of Games')
 ylabel('Percent')
 
 
+# In[24]:
+
+
 agent1.learning=False
 agent2.learning=False
 g=Game(number_of_games=100)
@@ -494,6 +435,8 @@ result=g.run(agent1,random_agent)
 g.report()
 
 
+# In[25]:
+
 
 agent1.learning=False
 agent2.learning=False
@@ -501,6 +444,27 @@ g=Game(number_of_games=100)
 g.display=False
 result=g.run(random_agent,agent2)
 g.report()
+
+
+# In[26]:
+
+
+agent1.learning=False
+agent2.learning=False
+g=Game(number_of_games=100)
+g.display=False
+result=g.run(minimax_agent,agent2)
+g.report()
+
+
+# In[27]:
+
+
+for state in range(1,9+1):
+    print(state,":",QNN2_agent.Q[state])
+
+
+# In[ ]:
 
 
 

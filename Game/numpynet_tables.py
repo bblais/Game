@@ -6,7 +6,6 @@ from NumPyNet.metrics import mean_accuracy_score
 from NumPyNet.optimizer import Adam, SGD, Momentum
 from NumPyNet.metrics import mean_absolute_error
 import numpy as np
-print("nn",0,0,3)
 
 import json
 class NumpyAwareJSONEncoder(json.JSONEncoder):

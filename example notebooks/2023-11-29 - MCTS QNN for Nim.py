@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 
 def initial_state():
-    return 9
+    return 20
 
 def valid_moves(state,player):
     if state==1:
@@ -109,14 +109,123 @@ T=Table()
 mcts_run_simulation(state,player=1,T=T,save_states=True)
 
 
+# ## Q
+
 # In[9]:
 
 
-import numpy as np
-from nn import NumpyNetTable
+def Q_move(state,player,info):
+    Q=info.Q
+    last_state=info.last_state
+    last_action=info.last_action
+    learning=info.learning
+    
+    α=info.α  # learning rate
+    ϵ=info.ϵ  # how often to take a random move
+    γ=info.γ  # memory constant -- how quickly does the table update back in time (earlier in the game)
+    
+    # \alpha <hit tab>    α
+    # \epsilon <hit tab>  ϵ
+    # \gamma <hit tab>    γ
+    
+    if state not in Q:
+        actions=valid_moves(state,player)
+        Q[state]=Table()
+        for action in actions:
+            Q[state][action]=0  # initial value of table
+    
+    if learning:
+        if random.random()<ϵ:  # take a random move occasionally to explore the environment
+            move=random_move(state,player)
+        else:
+            move=top_choice(Q[state])
+    else:
+        move=top_choice(Q[state])
+    
+    if not last_action is None:  # not the first move
+        reward=0
+        
+        # learn
+        if learning:
+            Q[last_state][last_action]+=α*(reward +
+                        γ*max([Q[state][a] for a in Q[state]]) - Q[last_state][last_action])
+    
+    return move
+
+
+def Q_after(status,player,info):
+    Q=info.Q
+    last_state=info.last_state
+    last_action=info.last_action
+    learning=info.learning
+    
+    α=info.α  # learning rate
+    ϵ=info.ϵ  # how often to take a random move
+    γ=info.γ  # memory constant -- how quickly does the table update back in time (earlier in the game)
+    
+    # \alpha <hit tab>    α
+    # \epsilon <hit tab>  ϵ
+    # \gamma <hit tab>    γ
+
+    if status=='lose':
+        reward=-1
+    elif status=='win':
+        reward=1
+    elif status=='stalemate':
+        reward=.5 # value stalemate a little closer to a win
+    else:
+        reward=0
+    
+    
+    if learning:
+        Q[last_state][last_action]+=α*(reward - Q[last_state][last_action])
+        
 
 
 # In[10]:
+
+
+Q1_agent=Agent(Q_move)
+Q1_agent.post=Q_after
+Q1_agent.Q=Table()  # makes an empty table
+Q1_agent.learning=True
+
+Q1_agent.α=0.4  # learning rate
+Q1_agent.ϵ=0.5  # how often to take a random move
+Q1_agent.γ=0.9  # memory constant -- how quickly does the table update back in time (earlier in the game)
+
+Q2_agent=Agent(Q_move)
+Q2_agent.post=Q_after
+Q2_agent.Q=Table()  # makes an empty table
+Q2_agent.learning=True
+
+Q2_agent.α=0.4  # learning rate
+Q2_agent.ϵ=0.5  # how often to take a random move
+Q2_agent.γ=0.9  # memory constant -- how quickly does the table update back in time (earlier in the game)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# ## QNN
+
+# In[11]:
+
+
+import numpy as np
+from Game.numpynet_tables import NumpyNetTable
+
+
+# In[12]:
 
 
 def all_possible_moves():
@@ -126,7 +235,7 @@ def all_possible_moves():
 
 # length 9 with +1, -1, 0
 def state_to_X(state):
-    max_state=9
+    max_state=21
     import numpy as np
     arr=np.zeros((1,max_state))  # number of samples, size
     arr[0,state-1]=1
@@ -135,26 +244,26 @@ def state_to_X(state):
 
 
 
-# In[11]:
+# In[13]:
 
 
 state=8
 state
 
 
-# In[12]:
+# In[14]:
 
 
 state_to_X(state)
 
 
-# In[13]:
+# In[15]:
 
 
 from datetime import datetime
 
 
-# In[14]:
+# In[16]:
 
 
 def QNN_move(state,player,info):
@@ -198,8 +307,13 @@ def QNN_move(state,player,info):
     calculation_time=1 # maximum seconds of mcts
     games=0
     begin=datetime.utcnow()
+    all_states=[]
     while ( (datetime.utcnow()-begin).total_seconds()< calculation_time) and (games<number_of_games_mcts):
         states,moves,game_reward=mcts_run_simulation(state,player,max_moves=30,T=T,save_states=True)
+        all_states.append((states,moves,game_reward))
+        games+=1
+
+    for states,moves,game_reward in all_states:
 
         possible_moves=Q.all_moves
         for k in range(len(states)-1):
@@ -245,16 +359,13 @@ def QNN_move(state,player,info):
                 target.append(-1)  # lose with illegal move
 
         Q[state2]=target            
-        
-        
-        games+=1
     
         
     return action
 
 
 
-# In[15]:
+# In[17]:
 
 
 QNN1_agent=Agent(QNN_move)
@@ -263,7 +374,7 @@ QNN1_agent.alpha=0.05  # learning rate
 QNN1_agent.gamma=0.95  # memory
 QNN1_agent.epsilon=0.1  # chance of making a random move
 QNN1_agent.T=Table()  # this is for MCTS
-QNN1_agent.number_of_games_mcts=20
+QNN1_agent.number_of_games_mcts=25
 QNN1_agent.learning=True
 
 
@@ -273,11 +384,11 @@ QNN2_agent.alpha=0.05  # learning rate
 QNN2_agent.gamma=0.95  # memory
 QNN2_agent.epsilon=0.1  # chance of making a random move
 QNN2_agent.T=Table()  # this is for MCTS
-QNN2_agent.number_of_games_mcts=20
+QNN2_agent.number_of_games_mcts=25
 QNN2_agent.learning=True
 
 
-# In[16]:
+# In[18]:
 
 
 state=initial_state()
@@ -310,7 +421,7 @@ QNN1_agent.Q[state]=[0]*len(all_possible_moves())
 QNN2_agent.Q[state]=[0]*len(all_possible_moves())
 
 
-# In[17]:
+# In[19]:
 
 
 from Game.minimax import *
@@ -322,7 +433,7 @@ def minimax_move(state,player):
 minimax_agent=Agent(minimax_move)
 
 
-# In[18]:
+# In[20]:
 
 
 agent1=QNN1_agent
@@ -332,7 +443,7 @@ N_test=100
 N_train=5
 
 
-# In[19]:
+# In[21]:
 
 
 S1=Storage()
@@ -342,10 +453,10 @@ one1,two1,ties1,illegal1,N1,total_train1=0,0,0,0,0,0
 one2,two2,ties2,illegal2,N2,total_train2=0,0,0,0,0,0
 
 
-# In[20]:
+# In[22]:
 
 
-for i in tqdm(range(500)):
+for i in tqdm(range(100)):
     agent1.learning=True
     agent2.learning=True
     g=Game(number_of_games=N_train)
@@ -383,14 +494,15 @@ for i in tqdm(range(500)):
 
 
 
-# In[21]:
+# In[23]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 from matplotlib.pyplot import figure,plot,grid,legend,xlabel,ylabel,title
+from numpy import ones_like
 
 
-# In[22]:
+# In[24]:
 
 
 y1,y2,y0,y3,x,t=S1.arrays()
@@ -398,6 +510,7 @@ figure(figsize=(16,8))
 plot(t,y1,'-o',label='One Win')
 plot(t,y2,'-o',label='Two Win')
 plot(t,y0,'-o',label='Tie')
+plot(t,100*ones_like(t),'k--')
 if any(y3):
     plot(t,y3,'-o',label='Illegal')
 legend()
@@ -406,7 +519,7 @@ xlabel('Number of Games')
 ylabel('Percent')
 
 
-# In[23]:
+# In[25]:
 
 
 y1,y2,y0,y3,x,t=S2.arrays()
@@ -414,6 +527,8 @@ figure(figsize=(16,8))
 plot(t,y1,'-o',label='One Win')
 plot(t,y2,'-o',label='Two Win')
 plot(t,y0,'-o',label='Tie')
+plot(t,100*ones_like(t),'k--')
+
 if any(y3):
     plot(t,y3,'-o',label='Illegal')
 legend()
@@ -422,7 +537,7 @@ xlabel('Number of Games')
 ylabel('Percent')
 
 
-# In[24]:
+# In[26]:
 
 
 agent1.learning=False
@@ -433,7 +548,18 @@ result=g.run(agent1,random_agent)
 g.report()
 
 
-# In[25]:
+# In[27]:
+
+
+agent1.learning=False
+agent2.learning=False
+g=Game(number_of_games=100)
+g.display=False
+result=g.run(agent1,minimax_agent)
+g.report()
+
+
+# In[28]:
 
 
 agent1.learning=False
@@ -444,7 +570,7 @@ result=g.run(random_agent,agent2)
 g.report()
 
 
-# In[26]:
+# In[29]:
 
 
 agent1.learning=False
@@ -455,11 +581,53 @@ result=g.run(minimax_agent,agent2)
 g.report()
 
 
-# In[27]:
+# In[30]:
 
 
 for state in range(1,9+1):
-    print(state,":",QNN2_agent.Q[state])
+    print(state,":",QNN1_agent.Q[state])
+
+
+# ## Q1 agent learns Nim 8 in less than 200 games, Nim 20 in 500 in 7 seconds
+# 
+# ![image.png](attachment:d853e489-c4f7-456d-88c0-702e9ce1a501.png)
+
+# ## QNN1 learns nim 8 almost instantly
+# 
+# ![image.png](attachment:d68eeb74-9fab-4f34-b0e5-fc774ec43946.png)
+
+# In[31]:
+
+
+for state in range(1,9+1):
+    print(state,":",QNN1_agent.Q[state])
+
+
+# In[32]:
+
+
+QNN1_agent.Q.save('test_QNN1_save.json')
+
+
+# In[33]:
+
+
+QNN1_agent_test=Agent(QNN_move)
+QNN1_agent_test.learning=False
+QNN1_agent_test.Q=NumpyNetTable(state_to_X,all_possible_moves(),
+                        verbose=False)
+
+QNN1_agent_test.Q.load('test_QNN1_save.json')
+
+for state in range(1,9+1):
+    print(state,":",QNN1_agent_test.Q[state])
+
+
+# In[34]:
+
+
+for state in range(1,9+1):
+    print(state,":",QNN1_agent.Q[state])
 
 
 # In[ ]:
