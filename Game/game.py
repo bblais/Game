@@ -315,7 +315,7 @@ class Game(object):
                     observation=self.state_to_observation(self.state,player)
 
                     if self.display:
-                        self.show_state(observation)
+                        self.show_state(observation,player)
 
                     moves=self.valid_moves(observation,player)
                     if moves==[]:
@@ -389,7 +389,7 @@ class Game(object):
 
             if self.display:
                 observation=self.state_to_observation(self.state,player)
-                self.show_state(observation)
+                self.show_state(observation,player)
 
                 
             stati=[None,None,None]
@@ -544,7 +544,7 @@ class CardGame(object):
                 
                 while not valid_move:
                     if self.display:
-                        self.show_state(self.state)
+                        self.show_state(self.state,player)
 
                     if agents[player].move_args==3:
                         move=agents[player].move(self.state,player,agents[player])
@@ -600,7 +600,7 @@ class CardGame(object):
 
 
             if self.display:
-                self.show_state(self.state)
+                self.show_state(self.state,player)
                 
             stati=[None,None,None]
             if status=='win':

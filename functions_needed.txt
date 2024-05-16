@@ -21,7 +21,7 @@ update_state -
     returns  - the new state after the move for the player
 
 show_state - 
-    takes in - the state
+    takes in - the state and the player
     returns nothing, but prints out the current state (i.e. draws the board)
 
 
