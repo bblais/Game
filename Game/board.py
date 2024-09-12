@@ -112,6 +112,16 @@ class Board(object):
                 locations.append(i)
         return locations
         
+    def location(self,r,c):
+        return self.index_from_rc(r,c)
+    def row(self,location):
+        r,c=self.rc_from_index(location)
+        return r
+
+    def col(self,location):
+        r,c=self.rc_from_index(location)
+        return c
+    
     def index_from_rc(self,rc,c=None):
     	# Convert row-column coordinates to list format if c argument is provided.
 
