@@ -3,5 +3,5 @@ from .board import *
 from .cards import *
 from .tables import Table, LoadTable,SaveTable,Table2,state2key
 
-__version__='0.3.02'
+__version__='0.3.03'
 print("Version: ",__version__)
