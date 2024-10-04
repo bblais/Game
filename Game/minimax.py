@@ -1161,10 +1161,10 @@ def spread2(pos,minx=0.07):
     
         level+=1        
 
-def plot_minimax_tree(state,player):
+def plot_minimax_tree(state,player,figsize=(30,20),ms=60):
     import pylab as plt
 
-    plt.figure(figsize=(30,20))
+    plt.figure(figsize=figsize)
     pos,conn,states=node_pos(state,2)
 
     #spread(pos)
@@ -1189,7 +1189,7 @@ def plot_minimax_tree(state,player):
         depth=int(round(y/-0.2))
         
         if states[key][1]:
-            plt.plot(x,y,'mo',ms=60)
+            plt.plot(x,y,'mo',ms=ms)
             value=str(maxvalue(states[key][0],2))
             if value=='1':
                 value='+1'
