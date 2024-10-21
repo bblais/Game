@@ -855,6 +855,17 @@ def minimax_values_orig(current_state,player,maxdepth=inf,display=True):
 def repeat_move_default(*args,**kwargs):
     return False
 
+def minimax_reset():
+    global valid_moves,win_status,update_state,repeat_move
+
+    d = dir()
+    for varname in ['minimax_values','update_state','valid_moves',
+                    'initial_state','show_state','win_status']:
+        if varname in d:
+            print(f"Removing {varname}")
+            del globals()[varname]    
+
+
 def minimax_values(current_state,player,maxdepth=inf,
                 adjust_values_by_depth=False,display=True,
                 verbose=False,cache=True):

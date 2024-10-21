@@ -178,6 +178,7 @@ class Game(object):
 
         f=inspect.currentframe()
         out=inspect.getouterframes(f)
+        self.out=out
         self.parent_dict=out[1][0].f_locals
         self.user_funcs=['valid_moves','show_state','initial_state',
                         'update_state','win_status','repeat_move']
@@ -242,8 +243,8 @@ class Game(object):
         N_autolose=wins.count(3)
         N_games=len(wins)
         print("Total number of games: ",N_games)
-        print("Winning %.2f percent" % (100.0*N_win/N_games))
-        print("Losing %.2f percent" % (100.0*N_lose/N_games))
+        print("Player 1 (%s) Winning %.2f percent" % (self.agent1_str,100.0*N_win/N_games))
+        print("Player 2 (%s) Winning %.2f percent" % (self.agent2_str,100.0*N_lose/N_games))
         print("Tie %.2f percent" % (100.0*N_tie/N_games))
         if N_autolose:
             print("Illegal Moves Causing Loss %.2f percent" % (100.0*N_autolose/N_games))
@@ -261,6 +262,8 @@ class Game(object):
 
     def run(self,agent1,agent2):
 
+        self.agent1_str=str(agent1.move).split()[1].replace('_move','')
+        self.agent2_str=str(agent2.move).split()[1].replace('_move','')
         self.wins=[]
         for game in range(self.number_of_games):
 
