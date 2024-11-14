@@ -77,9 +77,21 @@ class Board(object):
     """
 
     def __init__(self,*args):
-        self.shape=args
+        if isinstance(args[0],str):
+            board_str=args[0]
+            num_rows=board_str.count("/")+1
+            b=[int(_) for _ in ''.join([line.strip() for line in board_str.strip().split('/')])]
+            num_cols=len(b)//num_rows
+
+            self.shape=(num_rows,num_cols)
+            self.board=b
+
+        else:
+            self.shape=args
+            self.board=[0]*prod(args)
+
+
         self.dimension=len(self.shape)
-        self.board=[0]*prod(args)
         self.pieces=None
         self.team={}
         for i in range(3):
