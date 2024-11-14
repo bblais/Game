@@ -125,7 +125,6 @@ class Table2(UserDict):
 
 
 
-
 class Table(dict):
 
     def __init__(self, other=None,**kwargs):
