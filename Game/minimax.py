@@ -973,6 +973,12 @@ def minimax_values(current_state,player,maxdepth=inf,
     states=[]
 
     moves=valid_moves(current_state,player)
+
+    if moves is None:
+        print("Valid moves returned no moves for this state:")
+        print(state)
+        raise ValueError
+
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
 
