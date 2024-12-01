@@ -173,6 +173,7 @@ class Game(object):
         
         self.check_repeated_states=False
         self.save_states=False
+        self.max_move_count=500
         
         self.games=[]
 
@@ -349,6 +350,10 @@ class Game(object):
                 agents[player].last_action=deepcopy(move)
                 agents[player].last_state=deepcopy(observation)
                 agents[player].last_player=player
+
+
+                if move_count>self.max_move_count:
+                    auto_lose=True
 
                 if auto_lose:
                     status='lose'
@@ -567,6 +572,10 @@ class CardGame(object):
 
                         valid_move=True
                         auto_lose=True
+
+                if move_count>self.max_move_count:
+                    raise ValueError
+                    auto_lose=True
 
                 move_count+=1
                 agents[player].states.append(deepcopy(self.state))
