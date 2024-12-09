@@ -21,7 +21,7 @@ class NumpyAwareJSONEncoder(json.JSONEncoder):
 
 class NumpyNetTable(object):
     
-    def __init__(self,state_to_X,all_moves,model_dict={},verbose=False,save_data=False,
+    def __init__(self,state_to_X,all_moves,model_dict={},verbose=False,save_data=False,learning_rate=2e-2,
             **kwargs):
         self.all_moves=all_moves
         self.verbose=verbose
@@ -32,6 +32,8 @@ class NumpyNetTable(object):
 
         self._model=None
         self.model_dict=model_dict
+
+        self.learning_rate=learning_rate
 
         
     @property
@@ -73,7 +75,7 @@ class NumpyNetTable(object):
             n,typ=self.model_dict['output']
             self._model.add(Connected_layer(outputs=n, activation=typ))
             self._model.add(Cost_layer(cost_type=self.model_dict['cost']))
-            self._model.compile(optimizer=Adam(), metrics=[mean_absolute_error])
+            self._model.compile(optimizer=Adam(lr=self.learning_rate), metrics=[mean_absolute_error])
             if self.verbose:
                 self._model.summary()
 
