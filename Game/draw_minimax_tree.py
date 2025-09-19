@@ -1,3 +1,4 @@
+from drawio import *
 class Node():
 
     def __init__(self,value,m=50,h=100):
@@ -127,9 +128,9 @@ def tree(current_state,player,depth=0,maxdepth=inf,m=50,h=100):
     return node
     
 
-def draw_tree(state,maxdepth=inf)
+def draw_tree(state,maxdepth=inf):
 
-    from drawio import *
+    
 
     node=tree(state,1,m=50,h=200,maxdepth=maxdepth)
     x,y,labels=get_xy(node)

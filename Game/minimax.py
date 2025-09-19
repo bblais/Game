@@ -811,7 +811,14 @@ def maxvalue_ab_depth_nocache(current_state,player,depth=0,a=-inf,b=inf,maxdepth
 def mysort(*args,**kwargs):
 
     reverse=kwargs.get('reverse',False)
-    b=sorted(zip(*args),reverse=reverse)
+    try:
+        b=sorted(zip(*args),key=lambda x: x[0],reverse=reverse)  # sort by first element only
+    except TypeError:
+        for a,arg in enumerate(args):
+            print(a,arg)
+        raise
+
+
     
     newargs=[]
     for i in range(len(args)):
