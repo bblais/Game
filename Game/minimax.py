@@ -163,8 +163,10 @@ def minvalue(current_state,player,depth=0,maxdepth=inf):
         raise ValueError("valid_moves returned None with state=%s and player=%d - Did you forget to return the moves?" % (str(current_state),player))
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) 
-        for move in moves]
+    if repeat_move is repeat_move_default:  # default never repeats: skip the extra deepcopy
+        repeats=[False]*len(moves)
+    else:
+        repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
     values=[]
     for state,repeat in zip(available_states,repeats):
@@ -234,7 +236,10 @@ def maxvalue(current_state,player,depth=0,maxdepth=inf):
     moves=valid_moves(current_state,player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
+    if repeat_move is repeat_move_default:  # default never repeats: skip the extra deepcopy
+        repeats=[False]*len(moves)
+    else:
+        repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
     values=[]
     for state,repeat in zip(available_states,repeats):
@@ -291,18 +296,22 @@ def minvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
         return 0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MAX value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=minvalue_ab(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -359,18 +368,22 @@ def maxvalue_ab(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,verbose=F
         return 0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MIN value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=-inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=maxvalue_ab(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -428,18 +441,22 @@ def minvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,ver
         return 0+depth/1000.0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
 
     if verbose:
         print(tabs,"Getting MAX value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=minvalue_ab_depth(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -497,18 +514,22 @@ def maxvalue_ab_depth(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,ver
         return 0-depth/1000.0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MIN value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=-inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=maxvalue_ab_depth(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -569,18 +590,22 @@ def minvalue_ab_nocache(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,v
         return 0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MAX value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=minvalue_ab_nocache(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -637,18 +662,22 @@ def maxvalue_ab_nocache(current_state,player,depth=0,a=-inf,b=inf,maxdepth=inf,v
         return 0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MIN value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=-inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=maxvalue_ab_nocache(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -706,18 +735,22 @@ def minvalue_ab_depth_nocache(current_state,player,depth=0,a=-inf,b=inf,maxdepth
         return 0+depth/1000.0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
 
     if verbose:
         print(tabs,"Getting MAX value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=minvalue_ab_depth_nocache(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -775,18 +808,22 @@ def maxvalue_ab_depth_nocache(current_state,player,depth=0,a=-inf,b=inf,maxdepth
         return 0-depth/1000.0
 
     moves=valid_moves(current_state,player)
-    available_states=[update_state(deepcopy(current_state),player,move)
-                                for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
-    
+
     if verbose:
         print(tabs,"Getting MIN value for states")
-        for s in available_states:
+        for move in moves:
+            s=update_state(deepcopy(current_state),player,move)
             print('\n'.join([tabs +_ for _ in str(s).split('\n')]))    
 
-
     value=-inf
-    for state,repeat in zip(available_states,repeats):
+    for move in moves:
+        # build each child only when it is needed, so branches cut off by alpha-beta are never copied
+        state=update_state(deepcopy(current_state),player,move)
+        if repeat_move is repeat_move_default:
+            repeat=False
+        else:
+            repeat=repeat_move(deepcopy(current_state),player,move)
+
         if repeat:
             payoff=maxvalue_ab_depth_nocache(state,player,depth+1,a,b,maxdepth,verbose=verbose)
         else:
@@ -904,8 +941,10 @@ def minimax_values_orig(current_state,player,maxdepth=inf,display=True):
     moves=valid_moves(current_state,player)
     available_states=[update_state(deepcopy(current_state),player,move)
                                 for move in moves]
-    repeats=[repeat_move(deepcopy(current_state),player,move) 
-                for move in moves]
+    if repeat_move is repeat_move_default:  # default never repeats: skip the extra deepcopy
+        repeats=[False]*len(moves)
+    else:
+        repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
     for state,repeat in zip(available_states,repeats):
         if repeat:
@@ -998,8 +1037,10 @@ def minimax_values(current_state,player,maxdepth=inf,
 
 
 
-    repeats=[repeat_move(deepcopy(current_state),player,move) 
-                for move in moves]
+    if repeat_move is repeat_move_default:  # default never repeats: skip the extra deepcopy
+        repeats=[False]*len(moves)
+    else:
+        repeats=[repeat_move(deepcopy(current_state),player,move) for move in moves]
     
     if adjust_values_by_depth:
         for state,repeat in zip(available_states,repeats):
